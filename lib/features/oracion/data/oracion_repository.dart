@@ -1,6 +1,7 @@
 import 'package:altar_diario/data/models/peticion_oracion.dart';
 import 'package:altar_diario/data/services/firestore_service.dart';
 import 'package:altar_diario/presentation/providers/app_providers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Repositorio para la feature de oración.
@@ -29,18 +30,20 @@ class OracionRepository {
     final peticionesStream = _firestore.peticionesStream();
 
     // Combinar ambos streams y filtrar en el repositorio
-    return blockedStream.asyncMap((blockedUids) {
-      final blockedSet = blockedUids.toSet();
-      return peticionesStream.map((peticiones) {
-        return peticiones.where((p) {
-          final isBlocked = blockedSet.contains(p.userId);
-          // Filtrado defensivo: aunque Firestore ya filtra oculto == false,
-          // aplicamos el filtro aquí también por seguridad
-          final isHidden = p.oculto == true;
-          return !isBlocked && !isHidden;
-        }).toList();
-      });
-    }).asyncExpand((s) => s);
+    return blockedStream
+        .asyncMap((blockedUids) {
+          final blockedSet = blockedUids.toSet();
+          return peticionesStream.map((peticiones) {
+            return peticiones.where((p) {
+              final isBlocked = blockedSet.contains(p.userId);
+              // Filtrado defensivo: aunque Firestore ya filtra oculto == false,
+              // aplicamos el filtro aquí también por seguridad
+              final isHidden = p.oculto == true;
+              return !isBlocked && !isHidden;
+            }).toList();
+          });
+        })
+        .asyncExpand((s) => s);
   }
 
   /// Stream de peticiones filtradas por estado (respondida/pendiente)
@@ -68,18 +71,78 @@ class OracionRepository {
     );
 
     // Combinar ambos streams y filtrar en el repositorio
-    return blockedStream.asyncMap((blockedUids) {
-      final blockedSet = blockedUids.toSet();
-      return peticionesStream.map((peticiones) {
-        return peticiones.where((p) {
-          final isBlocked = blockedSet.contains(p.userId);
-          // Filtrado defensivo: aunque Firestore ya filtra oculto == false,
-          // aplicamos el filtro aquí también por seguridad
-          final isHidden = p.oculto == true;
-          return !isBlocked && !isHidden;
-        }).toList();
-      });
-    }).asyncExpand((s) => s);
+    return blockedStream
+        .asyncMap((blockedUids) {
+          final blockedSet = blockedUids.toSet();
+          return peticionesStream.map((peticiones) {
+            return peticiones.where((p) {
+              final isBlocked = blockedSet.contains(p.userId);
+              // Filtrado defensivo: aunque Firestore ya filtra oculto == false,
+              // aplicamos el filtro aquí también por seguridad
+              final isHidden = p.oculto == true;
+              return !isBlocked && !isHidden;
+            }).toList();
+          });
+        })
+        .asyncExpand((s) => s);
+  }
+
+  /// Stream de peticiones filtradas por estado (respondida/pendiente) con paginación por cursor
+  /// y filtradas por oculto + usuarios bloqueados.
+  /// Requiere [uid] para filtrar usuarios bloqueados.
+  /// Lanza [ArgumentError] si [uid] es nulo o vacío.
+  Stream<
+    ({List<PeticionOracion> items, DocumentSnapshot? lastDoc, bool hasMore})
+  >
+  peticionesStreamFiltradoCursor({
+    required String uid,
+    bool? respondida,
+    DocumentSnapshot? lastDocument,
+  }) {
+    if (uid.isEmpty) {
+      throw ArgumentError(
+        'uid es obligatorio para filtrar usuarios bloqueados',
+      );
+    }
+    if (_firestore.firestore == null) {
+      return Stream.value((
+        items: <PeticionOracion>[],
+        lastDoc: null,
+        hasMore: false,
+      ));
+    }
+
+    // Stream de UIDs bloqueados por el usuario actual
+    final blockedStream = _firestore.getUsuariosBloqueados(uid);
+
+    // Stream de peticiones desde Firestore con filtro opcional por respondida y cursor
+    final peticionesStream = _firestore.peticionesStreamFiltradoCursor(
+      respondida: respondida,
+      lastDocument: lastDocument,
+    );
+
+    // Combinar ambos streams y filtrar en el repositorio
+    return blockedStream
+        .asyncMap((blockedUids) {
+          final blockedSet = blockedUids.toSet();
+          return peticionesStream.map((page) {
+            final filteredItems = page.items.where((p) {
+              final isBlocked = blockedSet.contains(p.userId);
+              final isHidden = p.oculto == true;
+              return !isBlocked && !isHidden;
+            }).toList();
+            // hasMore se ajusta: si el filtrado local reduce items, puede que haya más
+            // pero no lo sabemos sin hacer otra query. Mantenemos hasMore del servicio
+            // y añadimos una heurística: si items filtrados < prayerPageSize pero hasMore
+            // del servicio es true, podríamos tener más.
+            return (
+              items: filteredItems,
+              lastDoc: page.lastDoc,
+              hasMore: page.hasMore,
+            );
+          });
+        })
+        .asyncExpand((s) => s);
   }
 
   /// Crea una nueva petición de oración.

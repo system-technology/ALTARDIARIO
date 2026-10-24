@@ -5,6 +5,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es/1.1.0/). Versionado se
 ## [Unreleased]
 
 ### Añadido
+- Filtro "Por las que oro" en OracionScreen: muestra peticiones donde el usuario actual hizo "Amén" (T-070).
+- Campo `apoyadosPor` (List<String>) en `PeticionOracion` para rastrear UIDs que oraron.
+- `apoyarPeticion` ahora incrementa `oracionesCount` y añade el UID a `apoyadosPor` con `FieldValue.arrayUnion`.
+- Nuevos métodos en `FirestoreService`: `peticionesStreamDondeOro(uid)` y `peticionesStreamDondeOroCursor(uid, lastDocument)`.
+- Nuevos métodos en `OracionRepository`: `peticionesStreamDondeOro(uid)` y `peticionesStreamDondeOroCursor(uid, lastDocument)` con filtro de bloqueados/oculto.
+- Enum `PeticionesFiltro { todas, pendientes, respondidas, misOraciones }` en providers de oración.
+- Provider `peticionesDondeOroProvider` y actualización de `peticionesFiltradasProvider` y `peticionesFiltradasCursorProvider` para manejar el nuevo filtro.
+- UI: PopupMenuButton en OracionScreen incluye opción "Por las que oro".
+- Tests: modelo (`peticion_oracion_test.dart`), repositorio (`oracion_repository_test.dart`), widget (`oracion_screen_test.dart`).
+
+### Cambiado
+- `apoyarPeticion` en `FirestoreService`, `OracionRepository` y UI ahora requiere `userId` como segundo parámetro.
+
 - Biblia RVR1960 empaquetada y funcional offline desde primer arranque (T-078).
 - `assets/bible/LICENCIAS.md`: registro de licencias por versión (RVR1960 por decisión Owner, RVR1909/WEB/KJV dominio público).
 - Pantalla de versiones: atribución/licencia visible, reintento de descarga (3× backoff exponencial), tamaño de archivo en MB.

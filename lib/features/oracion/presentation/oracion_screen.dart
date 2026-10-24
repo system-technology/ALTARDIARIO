@@ -6,6 +6,7 @@ import 'package:altar_diario/features/oracion/presentation/widgets/peticion_card
     show PeticionCard;
 import 'package:altar_diario/features/oracion/providers/oracion_providers.dart'
     show
+        PeticionesFiltro,
         peticionesFiltroProvider,
         peticionesFiltradasProvider,
         peticionesFiltradasCursorProvider;
@@ -81,7 +82,7 @@ class _OracionScreenState extends ConsumerState<OracionScreen> {
       final nextPage = await ref.read(
         peticionesFiltradasCursorProvider((
           uid: uid,
-          respondida: filtro,
+          filtro: filtro,
           lastDocument: _lastDocument,
         )).future,
       );
@@ -299,16 +300,24 @@ class _OracionScreenState extends ConsumerState<OracionScreen> {
           ],
         ),
         actions: [
-          PopupMenuButton<bool?>(
+          PopupMenuButton<PeticionesFiltro>(
             initialValue: filtro,
             tooltip: 'Filtrar peticiones',
             icon: const Icon(Icons.filter_list, color: AppTheme.textPrimary),
             onSelected: (value) =>
                 ref.read(peticionesFiltroProvider.notifier).setFiltro(value),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: null, child: Text('Todas')),
-              const PopupMenuItem(value: false, child: Text('Pendientes')),
-              const PopupMenuItem(value: true, child: Text('Respondidas')),
+              const PopupMenuItem(
+                  value: PeticionesFiltro.todas, child: Text('Todas')),
+              const PopupMenuItem(
+                  value: PeticionesFiltro.pendientes,
+                  child: Text('Pendientes')),
+              const PopupMenuItem(
+                  value: PeticionesFiltro.respondidas,
+                  child: Text('Respondidas')),
+              const PopupMenuItem(
+                  value: PeticionesFiltro.misOraciones,
+                  child: Text('Por las que oro')),
             ],
           ),
         ],
@@ -364,7 +373,7 @@ class _OracionScreenState extends ConsumerState<OracionScreen> {
                     final firstPage = await ref.read(
                       peticionesFiltradasCursorProvider((
                         uid: uid,
-                        respondida: filtro,
+                        filtro: filtro,
                         lastDocument: null,
                       )).future,
                     );

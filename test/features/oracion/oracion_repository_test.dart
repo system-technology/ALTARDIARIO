@@ -307,5 +307,114 @@ void main() {
         );
       },
     );
+
+    test(
+        'peticionesStreamDondeOro retorna peticiones donde el usuario está en apoyadosPor',
+        () async {
+      // Arrange: 4 peticiones, solo 2 tienen al usuario actual en apoyadosPor
+      await seedPeticiones(
+        peticiones: [
+          {
+            'id': 'p1',
+            'userId': 'u1',
+            'userName': 'User 1',
+            'motivo': 'Petición 1 (yo oré)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 1)),
+            'oculto': false,
+            'apoyadosPor': ['currentUser', 'u2'],
+          },
+          {
+            'id': 'p2',
+            'userId': 'u2',
+            'userName': 'User 2',
+            'motivo': 'Petición 2 (no oré)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 2)),
+            'oculto': false,
+            'apoyadosPor': ['u3'],
+          },
+          {
+            'id': 'p3',
+            'userId': 'u3',
+            'userName': 'User 3',
+            'motivo': 'Petición 3 (yo oré)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 3)),
+            'oculto': false,
+            'apoyadosPor': ['currentUser'],
+          },
+          {
+            'id': 'p4',
+            'userId': 'u4',
+            'userName': 'User 4',
+            'motivo': 'Petición 4 (oculta, yo oré)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 4)),
+            'oculto': true,
+            'apoyadosPor': ['currentUser'],
+          },
+        ],
+      );
+
+      // Act
+      final result =
+          await repository.peticionesStreamDondeOro(uid: 'currentUser').first;
+
+      // Assert: solo p1 y p3 (p2 no tiene currentUser en apoyadosPor, p4 está oculta)
+      expect(result, hasLength(2));
+      expect(result.map((p) => p.id).toSet(), equals({'p1', 'p3'}));
+    });
+
+    test('peticionesStreamDondeOro excluye peticiones de usuarios bloqueados',
+        () async {
+      // Arrange: 3 peticiones con currentUser en apoyadosPor, una de usuario bloqueado
+      await seedPeticiones(
+        peticiones: [
+          {
+            'id': 'p1',
+            'userId': 'u1',
+            'userName': 'User 1',
+            'motivo': 'Petición 1 (visible)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 1)),
+            'oculto': false,
+            'apoyadosPor': ['currentUser'],
+          },
+          {
+            'id': 'p2',
+            'userId': 'u2',
+            'userName': 'User 2',
+            'motivo': 'Petición 2 (bloqueado)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 2)),
+            'oculto': false,
+            'apoyadosPor': ['currentUser'],
+          },
+          {
+            'id': 'p3',
+            'userId': 'u3',
+            'userName': 'User 3',
+            'motivo': 'Petición 3 (visible)',
+            'fecha': Timestamp.fromDate(DateTime.utc(2026, 1, 3)),
+            'oculto': false,
+            'apoyadosPor': ['currentUser'],
+          },
+        ],
+      );
+
+      // Bloquear a u2
+      await seedBloqueados(uid: 'currentUser', blockedUids: ['u2']);
+
+      // Act
+      final result =
+          await repository.peticionesStreamDondeOro(uid: 'currentUser').first;
+
+      // Assert: solo p1 y p3 (p2 es de usuario bloqueado)
+      expect(result, hasLength(2));
+      expect(result.map((p) => p.id).toSet(), equals({'p1', 'p3'}));
+    });
+
+    test('peticionesStreamDondeOro lanza ArgumentError si uid es vacío',
+        () async {
+      await expectLater(
+        () => repository.peticionesStreamDondeOro(uid: ''),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }

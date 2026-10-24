@@ -10,6 +10,7 @@ class PeticionOracion {
   final bool respondida;
   final DateTime? fechaRespondida;
   final bool oculto;
+  final List<String> apoyadosPor;
 
   PeticionOracion({
     required this.id,
@@ -21,6 +22,7 @@ class PeticionOracion {
     this.respondida = false,
     this.fechaRespondida,
     this.oculto = false,
+    this.apoyadosPor = const [],
   });
 
   factory PeticionOracion.fromFirestore(DocumentSnapshot doc) {
@@ -37,6 +39,7 @@ class PeticionOracion {
           ? (data['fechaRespondida'] as Timestamp).toDate()
           : null,
       oculto: data['oculto'] ?? false,
+      apoyadosPor: List<String>.from(data['apoyadosPor'] ?? []),
     );
   }
 
@@ -55,6 +58,7 @@ class PeticionOracion {
           ? (data['fechaRespondida'] as Timestamp).toDate()
           : null,
       oculto: data['oculto'] ?? false,
+      apoyadosPor: List<String>.from(data['apoyadosPor'] ?? []),
     );
   }
 
@@ -69,6 +73,7 @@ class PeticionOracion {
       'fechaRespondida':
           fechaRespondida != null ? Timestamp.fromDate(fechaRespondida!) : null,
       'oculto': oculto,
+      'apoyadosPor': apoyadosPor,
     };
   }
 }

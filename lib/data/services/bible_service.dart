@@ -33,7 +33,6 @@ class BibleService {
   static List<BibleVersion> get availableVersions {
     return [
       const BibleVersion(id: 'rv1960', name: 'Reina-Valera 1960', lang: 'es'),
-      const BibleVersion(id: 'rv1909', name: 'Reina Valera 1909', lang: 'es'),
     ];
   }
 
@@ -126,7 +125,7 @@ class BibleService {
           'chapter': chapter,
           'verse': verse,
           'text': text,
-        }
+        },
       ];
       if (i % 1000 == 0 || i == total - 1) {
         onProgress?.call(i + 1, total);
@@ -271,11 +270,13 @@ class BibleService {
     for (final passage in passages) {
       final parsed = parsePassage(passage);
       if (parsed == null) {
-        results.add(BiblePassage(
-          reference: passage,
-          verses: const [],
-          message: 'Formato de pasaje no soportado.',
-        ));
+        results.add(
+          BiblePassage(
+            reference: passage,
+            verses: const [],
+            message: 'Formato de pasaje no soportado.',
+          ),
+        );
         continue;
       }
 
@@ -294,11 +295,13 @@ class BibleService {
         }
       }
 
-      results.add(BiblePassage(
-        reference: passage,
-        verses: rows.map(BibleVerse.fromMap).toList(),
-        message: rows.isEmpty ? 'Este pasaje aún no está disponible.' : null,
-      ));
+      results.add(
+        BiblePassage(
+          reference: passage,
+          verses: rows.map(BibleVerse.fromMap).toList(),
+          message: rows.isEmpty ? 'Este pasaje aún no está disponible.' : null,
+        ),
+      );
     }
 
     return results.toList();
@@ -488,8 +491,11 @@ class BibleService {
       syncStatus: userId == null ? 'local' : 'pending',
     );
     if (_memoryMode) {
-      _memoryHighlights.removeWhere((h) =>
-          h.anchor == highlight.anchor && h.verseStart == highlight.verseStart);
+      _memoryHighlights.removeWhere(
+        (h) =>
+            h.anchor == highlight.anchor &&
+            h.verseStart == highlight.verseStart,
+      );
       _memoryHighlights.add(highlight);
       return highlight;
     }
@@ -571,11 +577,7 @@ class BibleService {
       return;
     }
     final db = await _db;
-    await db.delete(
-      'bible_notes',
-      where: 'id = ?',
-      whereArgs: [noteId],
-    );
+    await db.delete('bible_notes', where: 'id = ?', whereArgs: [noteId]);
   }
 
   Future<void> markHighlightSynced(String highlightId) async {
@@ -786,8 +788,8 @@ class BibleService {
               'book_name': bookName,
               'chapter': chapterNumber,
               'verse': verseNumber,
-              'text': verseText
-            }
+              'text': verseText,
+            },
           ];
         }
       }
@@ -1037,25 +1039,27 @@ class BibleService {
   }
 
   int _mapBookToId(String name) {
-    final normalized =
-        name.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+    final normalized = name.toLowerCase().trim().replaceAll(
+          RegExp(r'\s+'),
+          ' ',
+        );
     return _bookMap[normalized] ?? -1;
   }
 
-  List<BibleChapterAnchor> _chapterAnchors(
-    List<BiblePassage> passages,
-  ) {
+  List<BibleChapterAnchor> _chapterAnchors(List<BiblePassage> passages) {
     final seen = <String>{};
     final anchors = <BibleChapterAnchor>[];
     for (final passage in passages) {
       for (final verse in passage.verses) {
         final key = '${verse.version}:${verse.bookId}:${verse.chapter}';
         if (seen.add(key)) {
-          anchors.add(BibleChapterAnchor(
-            version: verse.version,
-            bookId: verse.bookId,
-            chapter: verse.chapter,
-          ));
+          anchors.add(
+            BibleChapterAnchor(
+              version: verse.version,
+              bookId: verse.bookId,
+              chapter: verse.chapter,
+            ),
+          );
         }
       }
     }

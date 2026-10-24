@@ -16,7 +16,7 @@ class FirestoreService {
   final FirebaseFirestore? _firestore;
 
   FirestoreService({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? _initFirestore();
+      : _firestore = firestore ?? _initFirestore();
 
   static FirebaseFirestore? _initFirestore() {
     try {
@@ -88,7 +88,7 @@ class FirestoreService {
 
   /// Carga una página de reflexiones usando cursor (startAfterDocument).
   Future<({List<Reflexion> items, DocumentSnapshot? lastDoc, bool hasMore})>
-  getReflexionesPage({DocumentSnapshot? lastDoc}) async {
+      getReflexionesPage({DocumentSnapshot? lastDoc}) async {
     if (!_available) {
       return (items: <Reflexion>[], lastDoc: null, hasMore: false);
     }
@@ -206,15 +206,15 @@ class FirestoreService {
       query = query.startAfterDocument(lastDocument);
     }
     return query.snapshots().map(
-      (s) => s.docs
-          .map((d) {
-            final data = d.data() as Map<String, dynamic>?;
-            if (data == null) return null;
-            return Comment.fromMap({'id': d.id, ...data});
-          })
-          .whereType<Comment>()
-          .toList(),
-    );
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return Comment.fromMap({'id': d.id, ...data});
+              })
+              .whereType<Comment>()
+              .toList(),
+        );
   }
 
   Future<void> publicarComentario(Comment comment) async {
@@ -259,18 +259,18 @@ class FirestoreService {
           .collection('comentarios')
           .doc(commentId)
           .update({
-            'likes': FieldValue.increment(-1),
-            'likedBy': FieldValue.arrayRemove([userId]),
-          });
+        'likes': FieldValue.increment(-1),
+        'likedBy': FieldValue.arrayRemove([userId]),
+      });
     } else {
       await _reflexiones
           .doc(reflexionId)
           .collection('comentarios')
           .doc(commentId)
           .update({
-            'likes': FieldValue.increment(1),
-            'likedBy': FieldValue.arrayUnion([userId]),
-          });
+        'likes': FieldValue.increment(1),
+        'likedBy': FieldValue.arrayUnion([userId]),
+      });
     }
   }
 
@@ -278,25 +278,23 @@ class FirestoreService {
 
   Stream<List<Debate>> debatesStream({String? libroId}) {
     if (!_available) return Stream.value([]);
-    var query =
-        _debates
-                .where('oculto', isEqualTo: false)
-                .orderBy('fecha', descending: true)
-            as Query;
+    var query = _debates
+        .where('oculto', isEqualTo: false)
+        .orderBy('fecha', descending: true) as Query;
     if (libroId != null && libroId.isNotEmpty) {
       query = query.where('libroId', isEqualTo: libroId);
     }
     query = query.limit(debatePageSize);
     return query.snapshots().map(
-      (s) => s.docs
-          .map(
-            (d) => Debate.fromMap({
-              'id': d.id,
-              ...d.data() as Map<String, dynamic>,
-            }),
-          )
-          .toList(),
-    );
+          (s) => s.docs
+              .map(
+                (d) => Debate.fromMap({
+                  'id': d.id,
+                  ...d.data() as Map<String, dynamic>,
+                }),
+              )
+              .toList(),
+        );
   }
 
   Future<void> crearDebate(Debate debate) async {
@@ -365,15 +363,15 @@ class FirestoreService {
       query = query.startAfterDocument(lastDocument);
     }
     return query.snapshots().map(
-      (s) => s.docs
-          .map((d) {
-            final data = d.data() as Map<String, dynamic>?;
-            if (data == null) return null;
-            return DebateReply.fromMap({'id': d.id, ...data});
-          })
-          .whereType<DebateReply>()
-          .toList(),
-    );
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return DebateReply.fromMap({'id': d.id, ...data});
+              })
+              .whereType<DebateReply>()
+              .toList(),
+        );
   }
 
   Future<void> crearRespuesta(DebateReply reply) async {
@@ -443,10 +441,7 @@ class FirestoreService {
 
   Stream<Usuario?> getUsuario(String uid) {
     if (!_available) return Stream.value(null);
-    return _usuarios
-        .doc(uid)
-        .snapshots()
-        .map(
+    return _usuarios.doc(uid).snapshots().map(
           (d) => d.exists ? Usuario.fromMap({'id': d.id, ...d.data()!}) : null,
         );
   }
@@ -461,10 +456,7 @@ class FirestoreService {
   Stream<List<Usuario>> getUsuariosStream(List<String> uids) {
     if (!_available) return Stream.value([]);
     if (uids.isEmpty) return Stream.value([]);
-    return _usuarios
-        .where(FieldPath.documentId, whereIn: uids)
-        .snapshots()
-        .map(
+    return _usuarios.where(FieldPath.documentId, whereIn: uids).snapshots().map(
           (s) => s.docs
               .map((d) => Usuario.fromMap({'id': d.id, ...d.data()}))
               .toList(),
@@ -510,9 +502,8 @@ class FirestoreService {
   ) async {
     if (!_available || uids.isEmpty) return {};
     final result = <String, Map<String, dynamic>>{};
-    final snapshot = await _usuarios
-        .where(FieldPath.documentId, whereIn: uids)
-        .get();
+    final snapshot =
+        await _usuarios.where(FieldPath.documentId, whereIn: uids).get();
     for (final doc in snapshot.docs) {
       final data = doc.data();
       result[doc.id] = {
@@ -683,24 +674,21 @@ class FirestoreService {
   /// Stream de notificaciones filtrando las que provienen de usuarios bloqueados.
   Stream<List<Map<String, dynamic>>> notificationsStreamFiltrado(String uid) {
     if (!_available) return Stream.value([]);
-    return getUsuariosBloqueados(uid)
-        .asyncMap((bloqueados) {
-          return _usuarios
-              .doc(uid)
-              .collection('notifications')
-              .orderBy('createdAt', descending: true)
-              .limit(50)
-              .snapshots()
-              .map(
-                (s) =>
-                    s.docs.map((d) => {'id': d.id, ...d.data()}).where((notif) {
-                      final actorId = notif['actorId'] as String?;
-                      if (actorId == null) return true;
-                      return !bloqueados.contains(actorId);
-                    }).toList(),
-              );
-        })
-        .asyncExpand((s) => s);
+    return getUsuariosBloqueados(uid).asyncMap((bloqueados) {
+      return _usuarios
+          .doc(uid)
+          .collection('notifications')
+          .orderBy('createdAt', descending: true)
+          .limit(50)
+          .snapshots()
+          .map(
+            (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((notif) {
+              final actorId = notif['actorId'] as String?;
+              if (actorId == null) return true;
+              return !bloqueados.contains(actorId);
+            }).toList(),
+          );
+    }).asyncExpand((s) => s);
   }
 
   /// Marca una notificaciÃ³n como leÃ­da.
@@ -842,15 +830,15 @@ class FirestoreService {
     }
 
     return query.snapshots().map(
-      (s) => s.docs
-          .map(
-            (d) => PeticionOracion.fromMap({
-              'id': d.id,
-              ...d.data() as Map<String, dynamic>,
-            }),
-          )
-          .toList(),
-    );
+          (s) => s.docs
+              .map(
+                (d) => PeticionOracion.fromMap({
+                  'id': d.id,
+                  ...d.data() as Map<String, dynamic>,
+                }),
+              )
+              .toList(),
+        );
   }
 
   /// Stream de peticiones filtrado por estado (respondida/pendiente) con paginación por cursor.
@@ -858,9 +846,11 @@ class FirestoreService {
   /// [lastDocument] es el último documento de la página anterior (opcional).
   /// Retorna una tupla con (items, lastDoc, hasMore).
   Stream<
-    ({List<PeticionOracion> items, DocumentSnapshot? lastDoc, bool hasMore})
-  >
-  peticionesStreamFiltradoCursor({
+      ({
+        List<PeticionOracion> items,
+        DocumentSnapshot? lastDoc,
+        bool hasMore
+      })> peticionesStreamFiltradoCursor({
     bool? respondida,
     DocumentSnapshot? lastDocument,
   }) {
@@ -1003,15 +993,15 @@ class FirestoreService {
       query = query.startAfterDocument(lastDocument);
     }
     return query.snapshots().map(
-      (s) => s.docs
-          .map((d) {
-            final data = d.data() as Map<String, dynamic>?;
-            if (data == null) return null;
-            return Message.fromMap({'id': d.id, ...data});
-          })
-          .whereType<Message>()
-          .toList(),
-    );
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return Message.fromMap({'id': d.id, ...data});
+              })
+              .whereType<Message>()
+              .toList(),
+        );
   }
 
   /// Envía un mensaje al chat [chatId].
@@ -1095,34 +1085,32 @@ class FirestoreService {
   /// el otro participante estÃ¡ bloqueado por [userId]).
   Stream<List<Map<String, dynamic>>> getUserChatsFiltrados(String userId) {
     if (!_available) return Stream.value([]);
-    return getUsuariosBloqueados(userId)
-        .asyncMap((bloqueados) {
-          return _chats
-              .where('participantIds', arrayContains: userId)
-              .orderBy('lastUpdate', descending: true)
-              .limit(chatsPageSize)
-              .snapshots()
-              .map(
-                (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((
-                  chat,
-                ) {
-                  final participants = List<String>.from(
-                    chat['participantIds'] ?? [],
-                  );
-                  // Solo ocultar si TODOS los otros participantes estan bloqueados
-                  // (chat de 2 personas donde el otro esta bloqueado)
-                  final otros = participants.where((p) => p != userId).toList();
-                  if (otros.isEmpty) return false;
-                  // En chats de 2, ocultar si el otro esta bloqueado
-                  if (otros.length == 1) {
-                    return !bloqueados.contains(otros.first);
-                  }
-                  // En chats grupales, mostrar siempre
-                  return true;
-                }).toList(),
+    return getUsuariosBloqueados(userId).asyncMap((bloqueados) {
+      return _chats
+          .where('participantIds', arrayContains: userId)
+          .orderBy('lastUpdate', descending: true)
+          .limit(chatsPageSize)
+          .snapshots()
+          .map(
+            (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((
+              chat,
+            ) {
+              final participants = List<String>.from(
+                chat['participantIds'] ?? [],
               );
-        })
-        .asyncExpand((s) => s);
+              // Solo ocultar si TODOS los otros participantes estan bloqueados
+              // (chat de 2 personas donde el otro esta bloqueado)
+              final otros = participants.where((p) => p != userId).toList();
+              if (otros.isEmpty) return false;
+              // En chats de 2, ocultar si el otro esta bloqueado
+              if (otros.length == 1) {
+                return !bloqueados.contains(otros.first);
+              }
+              // En chats grupales, mostrar siempre
+              return true;
+            }).toList(),
+          );
+    }).asyncExpand((s) => s);
   }
   // ââ Bloqueos de usuarios âââââââââââââââââââââââââââââââââââââââââââââââââââ
 
@@ -1131,11 +1119,7 @@ class FirestoreService {
   Future<void> bloquearUsuario(String uid, String blockedUid) async {
     if (!_available) return;
     if (uid == blockedUid) return;
-    await _usuarios
-        .doc(uid)
-        .collection('blocked')
-        .doc(blockedUid)
-        .set(
+    await _usuarios.doc(uid).collection('blocked').doc(blockedUid).set(
           Bloqueo(
             uid: uid,
             blockedUid: blockedUid,

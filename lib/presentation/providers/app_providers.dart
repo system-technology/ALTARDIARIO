@@ -208,8 +208,8 @@ class PeticionesFiltroNotifier extends Notifier<bool?> {
 /// Filtro actual para las peticiones (null = todas, true = respondidas, false = pendientes).
 final peticionesFiltroProvider =
     NotifierProvider<PeticionesFiltroNotifier, bool?>(
-      PeticionesFiltroNotifier.new,
-    );
+  PeticionesFiltroNotifier.new,
+);
 
 /// Peticiones de oración filtradas por estado (respondida/pendiente).
 final peticionesFiltradasProvider = StreamProvider<List<PeticionOracion>>((
@@ -241,8 +241,8 @@ final isAuthorProvider = Provider.family<bool, String>((ref, authorId) {
 /// Lista de chats filtrando usuarios bloqueados.
 final chatListFiltradoProvider =
     StreamProvider.family<List<Map<String, dynamic>>, String>((ref, userId) {
-      return ref.watch(firestoreServiceProvider).getUserChatsFiltrados(userId);
-    });
+  return ref.watch(firestoreServiceProvider).getUserChatsFiltrados(userId);
+});
 
 /// Perfil de otro usuario (público). Retorna null si el usuario actual lo
 /// ha bloqueado.
@@ -302,9 +302,8 @@ final friendStreaksProvider = FutureProvider<List<FriendStreak>>((ref) async {
   final results = <FriendStreak>[];
   for (final id in allUids) {
     final data = streaksData[id];
-    final progreso = data != null
-        ? List<String>.from(data['progresoLectura'])
-        : <String>[];
+    final progreso =
+        data != null ? List<String>.from(data['progresoLectura']) : <String>[];
     final racha = storage.calcularRacha(progreso);
     final maxS = data != null ? (data['maxStreak'] as int? ?? 0) : 0;
     String deriveName(String n) {
@@ -395,9 +394,8 @@ final globalLeaderboardProvider = FutureProvider<List<LeaderboardEntry>>((
   for (int i = 0; i < allUsers.length; i++) {
     final user = allUsers[i];
     final data = streaksData[user.id];
-    final progreso = data != null
-        ? List<String>.from(data['progresoLectura'])
-        : <String>[];
+    final progreso =
+        data != null ? List<String>.from(data['progresoLectura']) : <String>[];
     final racha = storage.calcularRacha(progreso);
     final maxS = data != null ? (data['maxStreak'] as int? ?? 0) : 0;
 
@@ -413,12 +411,10 @@ final globalLeaderboardProvider = FutureProvider<List<LeaderboardEntry>>((
           nombre: 'Tú',
           fotoUrl: user.fotoUrl,
           rachaActual: localRacha > racha ? localRacha : racha,
-          maxStreak: storage.getMaxStreak() > maxS
-              ? storage.getMaxStreak()
-              : maxS,
-          totalLecturas: localTotal > progreso.length
-              ? localTotal
-              : progreso.length,
+          maxStreak:
+              storage.getMaxStreak() > maxS ? storage.getMaxStreak() : maxS,
+          totalLecturas:
+              localTotal > progreso.length ? localTotal : progreso.length,
           posicion: i + 1,
         ),
       );
@@ -503,47 +499,35 @@ final debatesStreamProvider = StreamProvider.family<List<Debate>, String?>((
 /// Stream de respuestas de un debate.
 final debateRepliesStreamProvider =
     StreamProvider.family<List<DebateReply>, String>((ref, debateId) {
-      return ref.watch(firestoreServiceProvider).debateRepliesStream(debateId);
-    });
+  return ref.watch(firestoreServiceProvider).debateRepliesStream(debateId);
+});
 
 /// Stream de respuestas de un debate con paginación por cursor.
-final debateRepliesStreamCursorProvider =
-    StreamProvider.family<
-      List<DebateReply>,
-      ({String debateId, DocumentSnapshot? lastDocument})
-    >((ref, params) {
-      return ref
-          .watch(firestoreServiceProvider)
-          .debateRepliesStreamCursor(
-            params.debateId,
-            lastDocument: params.lastDocument,
-          );
-    });
+final debateRepliesStreamCursorProvider = StreamProvider.family<
+    List<DebateReply>,
+    ({String debateId, DocumentSnapshot? lastDocument})>((ref, params) {
+  return ref.watch(firestoreServiceProvider).debateRepliesStreamCursor(
+        params.debateId,
+        lastDocument: params.lastDocument,
+      );
+});
 
 /// Comentarios de una reflexión con paginación por cursor.
-final comentariosStreamCursorProvider =
-    StreamProvider.family<
-      List<Comment>,
-      ({String reflexionId, DocumentSnapshot? lastDocument})
-    >((ref, params) {
-      return ref
-          .watch(firestoreServiceProvider)
-          .comentariosStreamCursor(
-            params.reflexionId,
-            lastDocument: params.lastDocument,
-          );
-    });
+final comentariosStreamCursorProvider = StreamProvider.family<List<Comment>,
+    ({String reflexionId, DocumentSnapshot? lastDocument})>((ref, params) {
+  return ref.watch(firestoreServiceProvider).comentariosStreamCursor(
+        params.reflexionId,
+        lastDocument: params.lastDocument,
+      );
+});
 
 /// Stream de mensajes de un chat con paginación por cursor.
-final chatMessagesCursorProvider =
-    StreamProvider.family<
-      List<Message>,
-      ({String chatId, DocumentSnapshot? lastDocument})
-    >((ref, params) {
-      return ref
-          .watch(firestoreServiceProvider)
-          .getMessagesCursor(params.chatId, lastDocument: params.lastDocument);
-    });
+final chatMessagesCursorProvider = StreamProvider.family<List<Message>,
+    ({String chatId, DocumentSnapshot? lastDocument})>((ref, params) {
+  return ref
+      .watch(firestoreServiceProvider)
+      .getMessagesCursor(params.chatId, lastDocument: params.lastDocument);
+});
 
 /// Sugerencias de amistad (usuarios que no sigues).
 final sugerenciasAmistadProvider = FutureProvider<List<Usuario>>((ref) async {
@@ -562,32 +546,31 @@ final sugerenciasAmistadProvider = FutureProvider<List<Usuario>>((ref) async {
 
   final mappedUsers = allUsers
       .where(
-        (u) =>
-            !excludeIds.contains(u.id) &&
-            u.nombre.trim().isNotEmpty &&
-            u.nombre.toLowerCase() != 'anónimo',
-      )
+    (u) =>
+        !excludeIds.contains(u.id) &&
+        u.nombre.trim().isNotEmpty &&
+        u.nombre.toLowerCase() != 'anónimo',
+  )
       .map((u) {
-        return Usuario(
-          id: u.id,
-          nombre: u.displayName,
-          email: u.email,
-          fotoUrl: u.fotoUrl,
-          bio: u.bio,
-          fechaCreacion: u.fechaCreacion,
-          siguiendo: u.siguiendo,
-          seguidores: u.seguidores,
-          modoEnfoque: u.modoEnfoque,
-          notifHour: u.notifHour,
-          notifMin: u.notifMin,
-          badges: u.badges,
-          totalPuntos: u.totalPuntos,
-          nivel: u.nivel,
-          progresoLectura: u.progresoLectura,
-          maxStreak: u.maxStreak,
-        );
-      })
-      .toList();
+    return Usuario(
+      id: u.id,
+      nombre: u.displayName,
+      email: u.email,
+      fotoUrl: u.fotoUrl,
+      bio: u.bio,
+      fechaCreacion: u.fechaCreacion,
+      siguiendo: u.siguiendo,
+      seguidores: u.seguidores,
+      modoEnfoque: u.modoEnfoque,
+      notifHour: u.notifHour,
+      notifMin: u.notifMin,
+      badges: u.badges,
+      totalPuntos: u.totalPuntos,
+      nivel: u.nivel,
+      progresoLectura: u.progresoLectura,
+      maxStreak: u.maxStreak,
+    );
+  }).toList();
 
   mappedUsers.shuffle();
   return mappedUsers.take(10).toList();
@@ -714,10 +697,10 @@ final notificationsFiltradasProvider = StreamProvider<List<AppNotification>>((
       .watch(firestoreServiceProvider)
       .notificationsStreamFiltrado(uid)
       .map((list) {
-        return list
-            .map((map) => AppNotification.fromMap(map['id'] ?? '', map))
-            .toList();
-      });
+    return list
+        .map((map) => AppNotification.fromMap(map['id'] ?? '', map))
+        .toList();
+  });
 });
 
 /// Contador de notificaciones no leídas (sobre el stream filtrado).

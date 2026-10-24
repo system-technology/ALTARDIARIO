@@ -1575,7 +1575,7 @@ tasks:
     phase: 4
     priority: P3
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - "Nuevo valor en peticionesFiltroProvider: 'mis_oraciones' (o enum)"
@@ -1589,6 +1589,12 @@ tasks:
       - test/screens/oracion_screen_test.dart
     source: auditoria-auto:2026-10-24
     created_at: 2026-10-24T11:55:11.852Z
+    started_at: 2026-10-24T18:51:13.584Z
+    done_at: 2026-10-24T18:51:13.584Z
+    evidence: "Mergeado en main por el PR #129 (rama b/T-070-filtro-por-las-que-oro-en-oracionscreen) con el CI en
+      verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 1085e048680e5a8c15eee8749a7a68278bf4f8eb
   - id: T-071
     title: Script de migración del campo oculto en documentos anteriores a T-026
     type: bug

@@ -1303,7 +1303,7 @@ tasks:
     phase: 1
     priority: P2
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - Los filtros oculto==false y de usuarios bloqueados viven en OracionRepository
@@ -1314,6 +1314,12 @@ tasks:
       - lib/data/services/firestore_service.dart
     source: auditoria:2026-10-24
     created_at: 2026-10-24T01:52:21.122Z
+    started_at: 2026-10-24T16:59:11.095Z
+    done_at: 2026-10-24T16:59:11.095Z
+    evidence: "Mergeado en main por el PR #119 (rama b/T-056-rehacer-la-limpieza-de-t-006-oracionrepo) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: bafa54cba8308aeb0a9714e04e7a89c0b018a553
   - id: T-057
     title: "CI para functions: ejecutar npm test en cada PR"
     type: infra
@@ -1649,7 +1655,7 @@ tasks:
     phase: 1
     priority: P1
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - scripts/auditor.mjs es un proceso continuo como scripts/ciclo.mjs (node scripts/auditor.mjs), con
@@ -1685,6 +1691,12 @@ tasks:
       - scripts/auditor.test.mjs
     source: auditoria-claude:2026-10-24
     created_at: 2026-10-24T16:00:00.000Z
+    started_at: 2026-10-24T17:20:00.014Z
+    done_at: 2026-10-24T17:20:00.015Z
+    evidence: "Mergeado en main por el PR #122 (rama a/T-073-auditor-autonomo-del-ciclo-scripts-audit) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 0f932101b106fa68f20bc9b127f002d00e4e8022
   - id: T-074
     title: Poner el auditor en la configuración del ciclo, en el estado y en el arranque con Windows
     type: feature
@@ -1740,11 +1752,19 @@ tasks:
     status: backlog
     depends_on: []
     acceptance:
-      - "Una Cloud Function disparada al borrarse el usuario de Auth (firebase-functions/v1 auth.user().onDelete, porque v2 no tiene ese disparador) elimina con el Admin SDK todo lo del uid: usuarios/{uid} con recursiveDelete (private, notifications, bible_highlights, bible_notes y demás subcolecciones), sus reflexiones con sus comentarios, sus peticiones de oración, sus debates con sus respuestas, y sus comentarios y respuestas sueltas en contenido ajeno (collectionGroup por userId)"
-      - "Los chats donde participaba no se borran (son también de la otra persona): se sustituye su nombre por «Usuario eliminado» en participantNames"
-      - "Es idempotente, por lotes y no lanza si no hay nada que borrar; registra solo contadores, nunca contenido"
-      - "Si hace falta un índice de collectionGroup o fieldOverrides para consultar por userId en comentarios y respuestas, se añade a firestore.indexes.json"
-      - "Tests de la Function en functions/ (npm test) con dobles del Admin SDK que cubren los tipos de contenido, el caso vacío y un fallo parcial"
+      - "Una Cloud Function disparada al borrarse el usuario de Auth (firebase-functions/v1
+        auth.user().onDelete, porque v2 no tiene ese disparador) elimina con el Admin SDK todo lo del uid:
+        usuarios/{uid} con recursiveDelete (private, notifications, bible_highlights, bible_notes y demás
+        subcolecciones), sus reflexiones con sus comentarios, sus peticiones de oración, sus debates con sus
+        respuestas, y sus comentarios y respuestas sueltas en contenido ajeno (collectionGroup por userId)"
+      - "Los chats donde participaba no se borran (son también de la otra persona): se sustituye su nombre por
+        «Usuario eliminado» en participantNames"
+      - Es idempotente, por lotes y no lanza si no hay nada que borrar; registra solo contadores, nunca
+        contenido
+      - Si hace falta un índice de collectionGroup o fieldOverrides para consultar por userId en comentarios y
+        respuestas, se añade a firestore.indexes.json
+      - Tests de la Function en functions/ (npm test) con dobles del Admin SDK que cubren los tipos de
+        contenido, el caso vacío y un fallo parcial
       - "CHANGELOG en Seguridad: el borrado de cuenta elimina también el contenido publicado"
     files:
       - functions/src/accountDeletion.ts
@@ -1762,9 +1782,15 @@ tasks:
     status: backlog
     depends_on: []
     acceptance:
-      - "Un test lista las escrituras y lecturas que hacía el cliente v1.0.4 (git show v1.0.4:lib/data/services/firestore_service.dart y los repositorios de entonces): publicar reflexión, comentar, reaccionar, orar, crear petición y debate, chat, notificaciones, perfil, seguir y bloquear"
-      - "firestore-tests/compat-v1.0.4.test.mjs reproduce cada operación con los campos exactos que enviaba v1.0.4 y comprueba que las reglas actuales las permiten, salvo las que el endurecimiento rechaza a propósito"
-      - "Para cada operación rechazada a propósito, el test lo documenta con el motivo y la descripción del PR lista qué verá un usuario de v1.0.4 (pantalla o error) para decidir si hace falta forzar la actualización con config/app minVersion"
+      - "Un test lista las escrituras y lecturas que hacía el cliente v1.0.4 (git show
+        v1.0.4:lib/data/services/firestore_service.dart y los repositorios de entonces): publicar reflexión,
+        comentar, reaccionar, orar, crear petición y debate, chat, notificaciones, perfil, seguir y bloquear"
+      - firestore-tests/compat-v1.0.4.test.mjs reproduce cada operación con los campos exactos que enviaba
+        v1.0.4 y comprueba que las reglas actuales las permiten, salvo las que el endurecimiento rechaza a
+        propósito
+      - Para cada operación rechazada a propósito, el test lo documenta con el motivo y la descripción del PR
+        lista qué verá un usuario de v1.0.4 (pantalla o error) para decidir si hace falta forzar la
+        actualización con config/app minVersion
     files:
       - firestore-tests/compat-v1.0.4.test.mjs
     source: auditoria-claude:2026-10-24
@@ -1778,12 +1804,25 @@ tasks:
     status: backlog
     depends_on: []
     acceptance:
-      - "Decisión del Owner: la Reina-Valera 1960 se mantiene empaquetada en la app (assets/bible/es_rv1960_complete.json) y es la versión por defecto; funciona sin conexión desde el primer arranque, con un test que lo comprueba sin red"
-      - "Las demás versiones no se empaquetan: se ofrecen como descargas adicionales opcionales desde la pantalla de versiones, con progreso, reintento, error comprensible y espacio ocupado; solo se descargan cuando el usuario lo pide"
-      - "assets/bible/LICENCIAS.md recoge cada versión que ofrece la app (empaquetada o descargable) con nombre, idioma, fuente y condición de uso comprobada en el sitio de origen. Para la RVR1960 consta que se incluye por decisión del Owner y deja un campo vacío para la referencia de la licencia o el permiso de las Sociedades Bíblicas, sin afirmar que exista. Las versiones descargables cuya licencia no conste claramente (dominio público o licencia libre) se retiran de la lista"
-      - "La app muestra la atribución de cada versión en Acerca de o en la pantalla de versiones; para la RVR1960 el aviso de derechos de autor «Reina-Valera 1960 © Sociedades Bíblicas Unidas», sin la leyenda de uso con permiso"
-      - "Reina-Valera 1909 (dominio público) queda completa y disponible como descarga adicional, y se comprueba que otras versiones libres elegidas (por ejemplo World English Bible o King James) cargan, se comparan y se borran bien"
-      - "Tests: la lista de versiones ofrecidas coincide con LICENCIAS.md, la versión elegida se conserva al actualizar y la comparación entre versiones sigue funcionando"
+      - "Decisión del Owner: la Reina-Valera 1960 se mantiene empaquetada en la app
+        (assets/bible/es_rv1960_complete.json) y es la versión por defecto; funciona sin conexión desde el
+        primer arranque, con un test que lo comprueba sin red"
+      - "Las demás versiones no se empaquetan: se ofrecen como descargas adicionales opcionales desde la
+        pantalla de versiones, con progreso, reintento, error comprensible y espacio ocupado; solo se
+        descargan cuando el usuario lo pide"
+      - assets/bible/LICENCIAS.md recoge cada versión que ofrece la app (empaquetada o descargable) con
+        nombre, idioma, fuente y condición de uso comprobada en el sitio de origen. Para la RVR1960 consta que
+        se incluye por decisión del Owner y deja un campo vacío para la referencia de la licencia o el permiso
+        de las Sociedades Bíblicas, sin afirmar que exista. Las versiones descargables cuya licencia no conste
+        claramente (dominio público o licencia libre) se retiran de la lista
+      - La app muestra la atribución de cada versión en Acerca de o en la pantalla de versiones; para la
+        RVR1960 el aviso de derechos de autor «Reina-Valera 1960 © Sociedades Bíblicas Unidas», sin la leyenda
+        de uso con permiso
+      - Reina-Valera 1909 (dominio público) queda completa y disponible como descarga adicional, y se
+        comprueba que otras versiones libres elegidas (por ejemplo World English Bible o King James) cargan,
+        se comparan y se borran bien
+      - "Tests: la lista de versiones ofrecidas coincide con LICENCIAS.md, la versión elegida se conserva al
+        actualizar y la comparación entre versiones sigue funcionando"
     files:
       - assets/bible/LICENCIAS.md
       - lib/presentation/screens/bible_compare_screen.dart
@@ -1798,9 +1837,15 @@ tasks:
     status: backlog
     depends_on: []
     acceptance:
-      - "web/privacidad.html (y web/privacy.html en inglés) estáticas, sin dependencias externas, accesibles en la URL pública de la web tras el despliegue de Hosting"
-      - "El contenido describe solo lo que la app hace de verdad, deducido del código: Firebase Authentication (correo, Google, Apple, invitado), Firestore (perfil público, cuenta privada, reflexiones, comentarios, peticiones de oración, debates, chats, notificaciones, notas y resaltados), Crashlytics, Analytics con parámetros sin texto libre, App Check, mensajería push; qué es público y qué privado"
-      - "Incluye cómo se borra la cuenta desde Perfil (y que se elimina el contenido publicado cuando T-076 esté integrada), cómo pedir el borrado por correo, retención, contacto del responsable, edad mínima y que no se venden datos"
+      - web/privacidad.html (y web/privacy.html en inglés) estáticas, sin dependencias externas, accesibles en
+        la URL pública de la web tras el despliegue de Hosting
+      - "El contenido describe solo lo que la app hace de verdad, deducido del código: Firebase Authentication
+        (correo, Google, Apple, invitado), Firestore (perfil público, cuenta privada, reflexiones,
+        comentarios, peticiones de oración, debates, chats, notificaciones, notas y resaltados), Crashlytics,
+        Analytics con parámetros sin texto libre, App Check, mensajería push; qué es público y qué privado"
+      - Incluye cómo se borra la cuenta desde Perfil (y que se elimina el contenido publicado cuando T-076
+        esté integrada), cómo pedir el borrado por correo, retención, contacto del responsable, edad mínima y
+        que no se venden datos
     files:
       - web/privacidad.html
       - web/privacy.html
@@ -1816,10 +1861,15 @@ tasks:
     depends_on:
       - T-079
     acceptance:
-      - "docs/TIENDA.md con el texto de la ficha en español e inglés (título, descripción corta y larga, novedades de la versión tomadas del CHANGELOG, palabras clave)"
-      - "Respuestas listas para el formulario de Seguridad de los datos de Google Play y para las etiquetas de privacidad de App Store, deducidas del código y de T-079: datos recogidos, finalidad, si se comparten, si son opcionales y cómo se borran"
-      - "Cuestionario de clasificación por edades y respuestas para el contenido generado por usuarios (reportar, bloquear, moderación, normas de la comunidad)"
-      - "Lista de capturas necesarias por pantalla y tamaño para Play y App Store, para que el Owner las haga en un dispositivo"
+      - docs/TIENDA.md con el texto de la ficha en español e inglés (título, descripción corta y larga,
+        novedades de la versión tomadas del CHANGELOG, palabras clave)
+      - "Respuestas listas para el formulario de Seguridad de los datos de Google Play y para las etiquetas de
+        privacidad de App Store, deducidas del código y de T-079: datos recogidos, finalidad, si se comparten,
+        si son opcionales y cómo se borran"
+      - Cuestionario de clasificación por edades y respuestas para el contenido generado por usuarios
+        (reportar, bloquear, moderación, normas de la comunidad)
+      - Lista de capturas necesarias por pantalla y tamaño para Play y App Store, para que el Owner las haga
+        en un dispositivo
     files:
       - docs/TIENDA.md
     source: auditoria-claude:2026-10-24
@@ -1834,8 +1884,9 @@ tasks:
     depends_on:
       - T-079
     acceptance:
-      - "Perfil tiene una acción Política de privacidad que abre la URL pública de web/privacidad.html (o privacy.html según el idioma), con texto en los ARB es y en"
-      - "Widget test de que la acción existe y lanza la URL con un doble de url_launcher"
+      - Perfil tiene una acción Política de privacidad que abre la URL pública de web/privacidad.html (o
+        privacy.html según el idioma), con texto en los ARB es y en
+      - Widget test de que la acción existe y lanza la URL con un doble de url_launcher
     files:
       - lib/presentation/screens/perfil_screen.dart
     source: auditoria-claude:2026-10-24

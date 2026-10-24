@@ -5,10 +5,7 @@ import 'package:altar_diario/data/models/peticion_oracion.dart';
 import 'package:altar_diario/features/oracion/presentation/widgets/peticion_card.dart'
     show PeticionCard;
 import 'package:altar_diario/features/oracion/providers/oracion_providers.dart'
-    show
-        peticionesFiltroProvider,
-        peticionesFiltradasProvider,
-        peticionesStreamProvider;
+    show peticionesFiltroProvider, peticionesFiltradasProvider;
 import 'package:altar_diario/presentation/providers/app_providers.dart'
     show
         effectiveUserUidProvider,
@@ -38,8 +35,10 @@ class OracionScreen extends ConsumerWidget {
           children: [
             Icon(Icons.auto_awesome, size: 20, color: AppTheme.primaryBlue),
             SizedBox(width: 8),
-            Text('Pedir Oración',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            Text(
+              'Pedir Oración',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
           ],
         ),
         content: Column(
@@ -51,8 +50,9 @@ class OracionScreen extends ConsumerWidget {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: '¿Por qué podemos orar por ti?',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 filled: true,
                 fillColor: AppTheme.pendingGray,
               ),
@@ -63,27 +63,33 @@ class OracionScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar',
-                style: TextStyle(color: AppTheme.textSecondary)),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppTheme.textSecondary),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryBlue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
             onPressed: () async {
               final motivo = controller.text.trim();
               if (motivo.isEmpty) return;
 
-              final policyCheck =
-                  CommunityPolicyService.validarContenido(motivo);
+              final policyCheck = CommunityPolicyService.validarContenido(
+                motivo,
+              );
               if (!policyCheck.isApproved) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(policyCheck.reason ??
-                        'La petición no cumple las normas comunitarias.'),
+                    content: Text(
+                      policyCheck.reason ??
+                          'La petición no cumple las normas comunitarias.',
+                    ),
                     backgroundColor: Colors.redAccent,
                   ),
                 );
@@ -152,14 +158,19 @@ class OracionScreen extends ConsumerWidget {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.local_fire_department,
-                  color: AppTheme.primaryBlue, size: 22),
+              const Icon(
+                Icons.local_fire_department,
+                color: AppTheme.primaryBlue,
+                size: 22,
+              ),
               const SizedBox(width: 8),
-              Text('AltarDiario',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(color: AppTheme.primaryBlue, fontSize: 20)),
+              Text(
+                'AltarDiario',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppTheme.primaryBlue,
+                      fontSize: 20,
+                    ),
+              ),
             ],
           ),
         ),
@@ -183,14 +194,19 @@ class OracionScreen extends ConsumerWidget {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.local_fire_department,
-                color: AppTheme.primaryBlue, size: 22),
+            const Icon(
+              Icons.local_fire_department,
+              color: AppTheme.primaryBlue,
+              size: 22,
+            ),
             const SizedBox(width: 8),
-            Text('AltarDiario',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium
-                    ?.copyWith(color: AppTheme.primaryBlue, fontSize: 20)),
+            Text(
+              'AltarDiario',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: AppTheme.primaryBlue,
+                    fontSize: 20,
+                  ),
+            ),
           ],
         ),
         actions: [
@@ -201,18 +217,9 @@ class OracionScreen extends ConsumerWidget {
             onSelected: (value) =>
                 ref.read(peticionesFiltroProvider.notifier).setFiltro(value),
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: null,
-                child: Text('Todas'),
-              ),
-              const PopupMenuItem(
-                value: false,
-                child: Text('Pendientes'),
-              ),
-              const PopupMenuItem(
-                value: true,
-                child: Text('Respondidas'),
-              ),
+              const PopupMenuItem(value: null, child: Text('Todas')),
+              const PopupMenuItem(value: false, child: Text('Pendientes')),
+              const PopupMenuItem(value: true, child: Text('Respondidas')),
             ],
           ),
         ],
@@ -224,8 +231,11 @@ class OracionScreen extends ConsumerWidget {
             padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
             child: Row(
               children: [
-                Icon(Icons.front_hand,
-                    size: 18, color: AppTheme.primaryBlueLight),
+                Icon(
+                  Icons.front_hand,
+                  size: 18,
+                  color: AppTheme.primaryBlueLight,
+                ),
                 SizedBox(width: 6),
                 Text(
                   'COMPAÑEROS DE ORACIÓN',
@@ -244,11 +254,12 @@ class OracionScreen extends ConsumerWidget {
               isLoading: peticionesAsync.isLoading,
               error: peticionesAsync.error,
               items: peticionesAsync.value,
-              onRetry: () => ref.refresh(peticionesStreamProvider.future),
+              onRetry: () => ref.refresh(peticionesFiltradasProvider.future),
               emptyTitle: 'No hay peticiones activas.',
               emptyDescription: '¡Sé el primero en pedir apoyo!',
               builder: (context, peticiones) => RefreshIndicator(
-                onRefresh: () => ref.refresh(peticionesStreamProvider.future),
+                onRefresh: () =>
+                    ref.refresh(peticionesFiltradasProvider.future),
                 child: ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                   itemCount: peticiones.length,

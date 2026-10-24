@@ -5,7 +5,10 @@ import 'package:altar_diario/data/models/peticion_oracion.dart';
 import 'package:altar_diario/features/oracion/presentation/widgets/peticion_card.dart'
     show PeticionCard;
 import 'package:altar_diario/features/oracion/providers/oracion_providers.dart'
-    show peticionesFiltroProvider, peticionesFiltradasProvider;
+    show
+        peticionesFiltroProvider,
+        peticionesFiltradasProvider,
+        peticionesFiltradasCursorProvider;
 import 'package:altar_diario/presentation/providers/app_providers.dart'
     show
         effectiveUserUidProvider,
@@ -17,14 +20,95 @@ import 'package:altar_diario/presentation/providers/app_providers.dart'
 import 'package:altar_diario/presentation/widgets/estados/index.dart';
 import 'package:altar_diario/presentation/widgets/guest_access_restricted_widget.dart'
     show GuestAccessRestrictedWidget;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Pantalla principal de la feature de oración (migrada a lib/features/oracion/).
 /// Mantiene la misma funcionalidad que la OracionScreen original pero usando
 /// los providers de la feature y delegando el card a PeticionCard widget.
-class OracionScreen extends ConsumerWidget {
+/// Implementa paginación por cursor con infinite scroll.
+class OracionScreen extends ConsumerStatefulWidget {
   const OracionScreen({super.key});
+
+  @override
+  ConsumerState<OracionScreen> createState() => _OracionScreenState();
+}
+
+class _OracionScreenState extends ConsumerState<OracionScreen> {
+  DocumentSnapshot? _lastDocument;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+  final List<PeticionOracion> _allPeticiones = [];
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        _hasMore &&
+        !_isLoadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (!_hasMore || _isLoadingMore) return;
+
+    setState(() => _isLoadingMore = true);
+
+    final filtro = ref.read(peticionesFiltroProvider);
+    final uid = ref.read(effectiveUserUidProvider);
+    if (uid == null) {
+      setState(() => _isLoadingMore = false);
+      return;
+    }
+
+    try {
+      // Usar el provider family con el último documento como cursor
+      final nextPage = await ref.read(
+        peticionesFiltradasCursorProvider((
+          uid: uid,
+          respondida: filtro,
+          lastDocument: _lastDocument,
+        )).future,
+      );
+
+      if (mounted) {
+        setState(() {
+          _allPeticiones.addAll(nextPage.items);
+          _lastDocument = nextPage.lastDoc;
+          _hasMore = nextPage.hasMore;
+          _isLoadingMore = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingMore = false);
+      }
+    }
+  }
+
+  void _resetPagination() {
+    setState(() {
+      _allPeticiones.clear();
+      _lastDocument = null;
+      _hasMore = true;
+      _isLoadingMore = false;
+    });
+  }
 
   void _abrirDialogoNuevaPeticion(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
@@ -145,7 +229,7 @@ class OracionScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isGuest = ref.watch(isGuestUserProvider);
 
     if (isGuest) {
@@ -184,6 +268,11 @@ class OracionScreen extends ConsumerWidget {
 
     final filtro = ref.watch(peticionesFiltroProvider);
     final peticionesAsync = ref.watch(peticionesFiltradasProvider);
+
+    // Resetear paginación cuando cambia el filtro
+    ref.listen(peticionesFiltroProvider, (_, __) {
+      _resetPagination();
+    });
 
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
@@ -251,20 +340,71 @@ class OracionScreen extends ConsumerWidget {
           ),
           Expanded(
             child: AsyncStateBuilder<PeticionOracion>(
-              isLoading: peticionesAsync.isLoading,
+              isLoading: peticionesAsync.isLoading && _allPeticiones.isEmpty,
               error: peticionesAsync.error,
-              items: peticionesAsync.value,
-              onRetry: () => ref.refresh(peticionesFiltradasProvider.future),
+              items: _allPeticiones.isEmpty
+                  ? peticionesAsync.value
+                  : _allPeticiones,
+              onRetry: () async {
+                _resetPagination();
+                // ignore: unused_result
+                await ref.refresh(peticionesFiltradasProvider.future);
+              },
               emptyTitle: 'No hay peticiones activas.',
               emptyDescription: '¡Sé el primero en pedir apoyo!',
               builder: (context, peticiones) => RefreshIndicator(
-                onRefresh: () =>
-                    ref.refresh(peticionesFiltradasProvider.future),
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
-                  itemCount: peticiones.length,
-                  itemBuilder: (context, index) =>
-                      PeticionCard(peticion: peticiones[index]),
+                onRefresh: () async {
+                  _resetPagination();
+                  // ignore: unused_result
+                  await ref.refresh(peticionesFiltradasProvider.future);
+                  // La primera carga se hace via el stream, así que solo reseteamos
+                  // y el stream emitirá la primera página
+                  final uid = ref.read(effectiveUserUidProvider);
+                  if (uid != null) {
+                    final firstPage = await ref.read(
+                      peticionesFiltradasCursorProvider((
+                        uid: uid,
+                        respondida: filtro,
+                        lastDocument: null,
+                      )).future,
+                    );
+                    if (mounted) {
+                      setState(() {
+                        _allPeticiones
+                          ..clear()
+                          ..addAll(firstPage.items);
+                        _lastDocument = firstPage.lastDoc;
+                        _hasMore = firstPage.hasMore;
+                      });
+                    }
+                  }
+                },
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollEndNotification &&
+                        _scrollController.position.pixels >=
+                            _scrollController.position.maxScrollExtent - 200 &&
+                        _hasMore &&
+                        !_isLoadingMore) {
+                      _loadMore();
+                    }
+                    return false;
+                  },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                    itemCount: peticiones.length +
+                        (_hasMore && _isLoadingMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index >= peticiones.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return PeticionCard(peticion: peticiones[index]);
+                    },
+                  ),
                 ),
               ),
             ),

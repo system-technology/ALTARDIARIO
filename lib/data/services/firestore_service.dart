@@ -79,9 +79,11 @@ class FirestoreService {
         .orderBy('fecha', descending: true)
         .limit(feedPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   /// Carga una página de reflexiones usando cursor (startAfterDocument).
@@ -111,9 +113,11 @@ class FirestoreService {
         .orderBy('fecha', descending: true)
         .limit(userReflectionsPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   Future<void> publicarReflexion(Reflexion reflexion) async {
@@ -122,7 +126,10 @@ class FirestoreService {
   }
 
   Future<void> toggleLike(
-      String reflexionId, String userId, bool isLiked) async {
+    String reflexionId,
+    String userId,
+    bool isLiked,
+  ) async {
     if (!_available) return;
     if (isLiked) {
       await _reflexiones.doc(reflexionId).update({
@@ -145,9 +152,11 @@ class FirestoreService {
         .orderBy('fecha', descending: true)
         .limit(userReflectionsPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => Reflexion.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   Future<List<Reflexion>> getUserReflexionesOnce(String userId) async {
@@ -174,15 +183,19 @@ class FirestoreService {
         .orderBy('fecha', descending: false)
         .limit(commentsPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Comment.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => Comment.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   /// Stream de comentarios con paginación por cursor.
   /// [lastDocument] es el último documento de la página anterior (opcional).
-  Stream<List<Comment>> comentariosStreamCursor(String reflexionId,
-      {DocumentSnapshot? lastDocument}) {
+  Stream<List<Comment>> comentariosStreamCursor(
+    String reflexionId, {
+    DocumentSnapshot? lastDocument,
+  }) {
     if (!_available) return Stream.value([]);
     Query query = _reflexiones
         .doc(reflexionId)
@@ -192,14 +205,16 @@ class FirestoreService {
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
     }
-    return query.snapshots().map((s) => s.docs
-        .map((d) {
-          final data = d.data() as Map<String, dynamic>?;
-          if (data == null) return null;
-          return Comment.fromMap({'id': d.id, ...data});
-        })
-        .whereType<Comment>()
-        .toList());
+    return query.snapshots().map(
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return Comment.fromMap({'id': d.id, ...data});
+              })
+              .whereType<Comment>()
+              .toList(),
+        );
   }
 
   Future<void> publicarComentario(Comment comment) async {
@@ -232,7 +247,11 @@ class FirestoreService {
   }
 
   Future<void> toggleCommentLike(
-      String reflexionId, String commentId, String userId, bool isLiked) async {
+    String reflexionId,
+    String commentId,
+    String userId,
+    bool isLiked,
+  ) async {
     if (!_available) return;
     if (isLiked) {
       await _reflexiones
@@ -266,10 +285,16 @@ class FirestoreService {
       query = query.where('libroId', isEqualTo: libroId);
     }
     query = query.limit(debatePageSize);
-    return query.snapshots().map((s) => s.docs
-        .map((d) =>
-            Debate.fromMap({'id': d.id, ...d.data() as Map<String, dynamic>}))
-        .toList());
+    return query.snapshots().map(
+          (s) => s.docs
+              .map(
+                (d) => Debate.fromMap({
+                  'id': d.id,
+                  ...d.data() as Map<String, dynamic>,
+                }),
+              )
+              .toList(),
+        );
   }
 
   Future<void> crearDebate(Debate debate) async {
@@ -278,7 +303,10 @@ class FirestoreService {
   }
 
   Future<void> toggleDebateVote(
-      String debateId, String userId, bool hasVoted) async {
+    String debateId,
+    String userId,
+    bool hasVoted,
+  ) async {
     if (!_available) return;
     if (hasVoted) {
       await _debates.doc(debateId).update({
@@ -314,30 +342,36 @@ class FirestoreService {
         .orderBy('fecha', descending: false)
         .limit(debateRepliesPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => DebateReply.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => DebateReply.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   /// Stream de respuestas de debates con paginación por cursor.
   /// [lastDocument] es el último documento de la página anterior (opcional).
-  Stream<List<DebateReply>> debateRepliesStreamCursor(String debateId,
-      {DocumentSnapshot? lastDocument}) {
+  Stream<List<DebateReply>> debateRepliesStreamCursor(
+    String debateId, {
+    DocumentSnapshot? lastDocument,
+  }) {
     if (!_available) return Stream.value([]);
-    Query query = _debateReplies(debateId)
-        .orderBy('fecha', descending: false)
-        .limit(debateRepliesPageSize);
+    Query query = _debateReplies(
+      debateId,
+    ).orderBy('fecha', descending: false).limit(debateRepliesPageSize);
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
     }
-    return query.snapshots().map((s) => s.docs
-        .map((d) {
-          final data = d.data() as Map<String, dynamic>?;
-          if (data == null) return null;
-          return DebateReply.fromMap({'id': d.id, ...data});
-        })
-        .whereType<DebateReply>()
-        .toList());
+    return query.snapshots().map(
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return DebateReply.fromMap({'id': d.id, ...data});
+              })
+              .whereType<DebateReply>()
+              .toList(),
+        );
   }
 
   Future<void> crearRespuesta(DebateReply reply) async {
@@ -366,7 +400,11 @@ class FirestoreService {
   }
 
   Future<void> toggleReplyVote(
-      String debateId, String replyId, String userId, bool hasVoted) async {
+    String debateId,
+    String replyId,
+    String userId,
+    bool hasVoted,
+  ) async {
     if (!_available) return;
     if (hasVoted) {
       await _debateReplies(debateId).doc(replyId).update({
@@ -383,17 +421,19 @@ class FirestoreService {
 
   // ââ Reacciones âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-  Future<void> toggleReaction(String reflexionId, String userId, String? emoji,
-      String? currentEmoji) async {
+  Future<void> toggleReaction(
+    String reflexionId,
+    String userId,
+    String? emoji,
+    String? currentEmoji,
+  ) async {
     if (!_available) return;
     if (currentEmoji == emoji) {
       await _reflexiones.doc(reflexionId).update({
         'reactions.$userId': FieldValue.delete(),
       });
     } else {
-      await _reflexiones.doc(reflexionId).update({
-        'reactions.$userId': emoji,
-      });
+      await _reflexiones.doc(reflexionId).update({'reactions.$userId': emoji});
     }
   }
 
@@ -402,7 +442,8 @@ class FirestoreService {
   Stream<Usuario?> getUsuario(String uid) {
     if (!_available) return Stream.value(null);
     return _usuarios.doc(uid).snapshots().map(
-        (d) => d.exists ? Usuario.fromMap({'id': d.id, ...d.data()!}) : null);
+          (d) => d.exists ? Usuario.fromMap({'id': d.id, ...d.data()!}) : null,
+        );
   }
 
   Future<Usuario?> getUsuarioOnce(String uid) async {
@@ -416,9 +457,10 @@ class FirestoreService {
     if (!_available) return Stream.value([]);
     if (uids.isEmpty) return Stream.value([]);
     return _usuarios.where(FieldPath.documentId, whereIn: uids).snapshots().map(
-        (s) => s.docs
-            .map((d) => Usuario.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+          (s) => s.docs
+              .map((d) => Usuario.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   Future<List<Usuario>> getSiguiendoUsuarios(String uid) async {
@@ -456,7 +498,8 @@ class FirestoreService {
   /// Obtiene datos de racha (progresoLectura, maxStreak) para una lista de usuarios.
   /// Usado para las rachas entre amigos y el leaderboard.
   Future<Map<String, Map<String, dynamic>>> getStreaksData(
-      List<String> uids) async {
+    List<String> uids,
+  ) async {
     if (!_available || uids.isEmpty) return {};
     final result = <String, Map<String, dynamic>>{};
     final snapshot =
@@ -488,7 +531,10 @@ class FirestoreService {
   /// Toggle un tema seguido por [uid]. Si [siguiendo] es true, agrega el tema;
   /// si es false, lo elimina.
   Future<void> toggleTemaSeguido(
-      String uid, String tema, bool siguiendo) async {
+    String uid,
+    String tema,
+    bool siguiendo,
+  ) async {
     if (!_available) return;
     if (siguiendo) {
       await _usuarios.doc(uid).update({
@@ -513,24 +559,27 @@ class FirestoreService {
   }
 
   Future<void> toggleFollow(
-      String currentUserId, String targetUserId, bool isFollowing) async {
+    String currentUserId,
+    String targetUserId,
+    bool isFollowing,
+  ) async {
     if (!_available) return;
     final currentDoc = _usuarios.doc(currentUserId);
     final targetDoc = _usuarios.doc(targetUserId);
 
     if (isFollowing) {
       await currentDoc.set({
-        'siguiendo': FieldValue.arrayRemove([targetUserId])
+        'siguiendo': FieldValue.arrayRemove([targetUserId]),
       }, SetOptions(merge: true));
       await targetDoc.set({
-        'seguidores': FieldValue.arrayRemove([currentUserId])
+        'seguidores': FieldValue.arrayRemove([currentUserId]),
       }, SetOptions(merge: true));
     } else {
       await currentDoc.set({
-        'siguiendo': FieldValue.arrayUnion([targetUserId])
+        'siguiendo': FieldValue.arrayUnion([targetUserId]),
       }, SetOptions(merge: true));
       await targetDoc.set({
-        'seguidores': FieldValue.arrayUnion([currentUserId])
+        'seguidores': FieldValue.arrayUnion([currentUserId]),
       }, SetOptions(merge: true));
 
       final currentUserSnap = await currentDoc.get();
@@ -556,7 +605,10 @@ class FirestoreService {
   }
 
   Future<void> syncProgress(
-      String userId, List<String> completedDates, int maxStreak) async {
+    String userId,
+    List<String> completedDates,
+    int maxStreak,
+  ) async {
     if (!_available) return;
     await _usuarios.doc(userId).set({
       'progresoLectura': completedDates,
@@ -568,21 +620,17 @@ class FirestoreService {
   /// Guarda el token FCM del usuario para push notifications.
   Future<void> saveFCMToken(String uid, String token) async {
     if (!_available) return;
-    await _usuarios
-        .doc(uid)
-        .collection('private')
-        .doc('account')
-        .set({'fcmToken': token}, SetOptions(merge: true));
+    await _usuarios.doc(uid).collection('private').doc('account').set({
+      'fcmToken': token,
+    }, SetOptions(merge: true));
   }
 
   /// Elimina el token FCM del usuario (logout).
   Future<void> clearFCMToken(String uid) async {
     if (!_available) return;
-    await _usuarios
-        .doc(uid)
-        .collection('private')
-        .doc('account')
-        .set({'fcmToken': FieldValue.delete()}, SetOptions(merge: true));
+    await _usuarios.doc(uid).collection('private').doc('account').set({
+      'fcmToken': FieldValue.delete(),
+    }, SetOptions(merge: true));
   }
 
   /// Crea una notificaciÃ³n en la subcolecciÃ³n del usuario (para Cloud Functions).
@@ -633,12 +681,13 @@ class FirestoreService {
           .orderBy('createdAt', descending: true)
           .limit(50)
           .snapshots()
-          .map((s) =>
-              s.docs.map((d) => {'id': d.id, ...d.data()}).where((notif) {
-                final actorId = notif['actorId'] as String?;
-                if (actorId == null) return true;
-                return !bloqueados.contains(actorId);
-              }).toList());
+          .map(
+            (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((notif) {
+              final actorId = notif['actorId'] as String?;
+              if (actorId == null) return true;
+              return !bloqueados.contains(actorId);
+            }).toList(),
+          );
     }).asyncExpand((s) => s);
   }
 
@@ -677,10 +726,9 @@ class FirestoreService {
     BibleHighlight highlight,
   ) async {
     if (!_available) return;
-    await _bibleHighlights(userId).doc(highlight.id).set(
-          highlight.toFirestoreMap(),
-          SetOptions(merge: true),
-        );
+    await _bibleHighlights(userId)
+        .doc(highlight.id)
+        .set(highlight.toFirestoreMap(), SetOptions(merge: true));
   }
 
   Future<List<BibleHighlight>> getBibleHighlightsForAnchors(
@@ -696,31 +744,29 @@ class FirestoreService {
           .where('chapter', isEqualTo: anchor.chapter)
           .get();
 
-      highlights.addAll(snapshot.docs.map((doc) {
-        return BibleHighlight.fromFirestoreMap(
-          id: doc.id,
-          userId: userId,
-          map: doc.data(),
-        );
-      }));
+      highlights.addAll(
+        snapshot.docs.map((doc) {
+          return BibleHighlight.fromFirestoreMap(
+            id: doc.id,
+            userId: userId,
+            map: doc.data(),
+          );
+        }),
+      );
     }
     return highlights;
   }
 
-  Future<void> deleteBibleHighlight(
-    String userId,
-    String highlightId,
-  ) async {
+  Future<void> deleteBibleHighlight(String userId, String highlightId) async {
     if (!_available) return;
     await _bibleHighlights(userId).doc(highlightId).delete();
   }
 
   Future<void> syncBibleNote(String userId, BibleNote note) async {
     if (!_available) return;
-    await _bibleNotes(userId).doc(note.id).set(
-          note.toFirestoreMap(),
-          SetOptions(merge: true),
-        );
+    await _bibleNotes(
+      userId,
+    ).doc(note.id).set(note.toFirestoreMap(), SetOptions(merge: true));
   }
 
   Future<List<BibleNote>> getBibleNotesForAnchors(
@@ -736,13 +782,15 @@ class FirestoreService {
           .where('chapter', isEqualTo: anchor.chapter)
           .get();
 
-      notes.addAll(snapshot.docs.map((doc) {
-        return BibleNote.fromFirestoreMap(
-          id: doc.id,
-          userId: userId,
-          map: doc.data(),
-        );
-      }));
+      notes.addAll(
+        snapshot.docs.map((doc) {
+          return BibleNote.fromFirestoreMap(
+            id: doc.id,
+            userId: userId,
+            map: doc.data(),
+          );
+        }),
+      );
     }
     return notes;
   }
@@ -761,9 +809,11 @@ class FirestoreService {
         .orderBy('fecha', descending: true)
         .limit(prayerPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => PeticionOracion.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => PeticionOracion.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   /// Stream de peticiones filtrado por estado (respondida/pendiente).
@@ -779,10 +829,64 @@ class FirestoreService {
       query = query.where('respondida', isEqualTo: respondida);
     }
 
-    return query.snapshots().map((s) => s.docs
-        .map((d) => PeticionOracion.fromMap(
-            {'id': d.id, ...d.data() as Map<String, dynamic>}))
-        .toList());
+    return query.snapshots().map(
+          (s) => s.docs
+              .map(
+                (d) => PeticionOracion.fromMap({
+                  'id': d.id,
+                  ...d.data() as Map<String, dynamic>,
+                }),
+              )
+              .toList(),
+        );
+  }
+
+  /// Stream de peticiones filtrado por estado (respondida/pendiente) con paginación por cursor.
+  /// Si [respondida] es null, no filtra por estado.
+  /// [lastDocument] es el último documento de la página anterior (opcional).
+  /// Retorna una tupla con (items, lastDoc, hasMore).
+  Stream<
+      ({
+        List<PeticionOracion> items,
+        DocumentSnapshot? lastDoc,
+        bool hasMore
+      })> peticionesStreamFiltradoCursor({
+    bool? respondida,
+    DocumentSnapshot? lastDocument,
+  }) {
+    if (!_available) {
+      return Stream.value((
+        items: <PeticionOracion>[],
+        lastDoc: null,
+        hasMore: false,
+      ));
+    }
+    Query query = _peticiones
+        .where('oculto', isEqualTo: false)
+        .orderBy('fecha', descending: true)
+        .limit(prayerPageSize);
+
+    if (respondida != null) {
+      query = query.where('respondida', isEqualTo: respondida);
+    }
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    return query.snapshots().map((s) {
+      final items = s.docs
+          .map(
+            (d) => PeticionOracion.fromMap({
+              'id': d.id,
+              ...d.data() as Map<String, dynamic>,
+            }),
+          )
+          .toList();
+      final newLastDoc = s.docs.isNotEmpty ? s.docs.last : null;
+      final hasMore = s.docs.length >= prayerPageSize;
+      return (items: items, lastDoc: newLastDoc, hasMore: hasMore);
+    });
   }
 
   Future<void> crearPeticionOracion(PeticionOracion peticion) async {
@@ -792,15 +896,17 @@ class FirestoreService {
 
   Future<void> apoyarPeticion(String peticionId) async {
     if (!_available) return;
-    await _peticiones
-        .doc(peticionId)
-        .update({'oracionesCount': FieldValue.increment(1)});
+    await _peticiones.doc(peticionId).update({
+      'oracionesCount': FieldValue.increment(1),
+    });
   }
 
   /// Marca una peticiÃ³n de oraciÃ³n como respondida.
   /// Solo el autor puede marcar su propia peticiÃ³n como respondida.
   Future<void> marcarPeticionComoRespondida(
-      String peticionId, String userId) async {
+    String peticionId,
+    String userId,
+  ) async {
     if (!_available) return;
     final docRef = _peticiones.doc(peticionId);
     final doc = await docRef.get();
@@ -809,7 +915,8 @@ class FirestoreService {
     final data = doc.data()!;
     if (data['userId'] != userId) {
       throw StateError(
-          'Solo el autor puede marcar la peticiÃ³n como respondida');
+        'Solo el autor puede marcar la peticiÃ³n como respondida',
+      );
     }
 
     await docRef.update({
@@ -863,15 +970,19 @@ class FirestoreService {
         .orderBy('timestamp', descending: true)
         .limit(messagesPageSize)
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Message.fromMap({'id': d.id, ...d.data()}))
-            .toList());
+        .map(
+          (s) => s.docs
+              .map((d) => Message.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
   }
 
   /// Stream de mensajes con paginación por cursor.
   /// [lastDocument] es el último documento de la página anterior (opcional).
-  Stream<List<Message>> getMessagesCursor(String chatId,
-      {DocumentSnapshot? lastDocument}) {
+  Stream<List<Message>> getMessagesCursor(
+    String chatId, {
+    DocumentSnapshot? lastDocument,
+  }) {
     if (!_available) return Stream.value([]);
     Query query = _chats
         .doc(chatId)
@@ -881,14 +992,16 @@ class FirestoreService {
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
     }
-    return query.snapshots().map((s) => s.docs
-        .map((d) {
-          final data = d.data() as Map<String, dynamic>?;
-          if (data == null) return null;
-          return Message.fromMap({'id': d.id, ...data});
-        })
-        .whereType<Message>()
-        .toList());
+    return query.snapshots().map(
+          (s) => s.docs
+              .map((d) {
+                final data = d.data() as Map<String, dynamic>?;
+                if (data == null) return null;
+                return Message.fromMap({'id': d.id, ...data});
+              })
+              .whereType<Message>()
+              .toList(),
+        );
   }
 
   /// Envía un mensaje al chat [chatId].
@@ -921,7 +1034,8 @@ class FirestoreService {
     } else {
       if (participantIds == null || participantIds.length != 2) {
         throw StateError(
-            'sendMessage: participantIds con exactamente 2 miembros es obligatorio para crear el chat $chatId');
+          'sendMessage: participantIds con exactamente 2 miembros es obligatorio para crear el chat $chatId',
+        );
       }
       // El documento del chat debe existir ANTES del mensaje (las reglas leen
       // participantIds del padre para autorizar la escritura en /messages).
@@ -978,21 +1092,24 @@ class FirestoreService {
           .limit(chatsPageSize)
           .snapshots()
           .map(
-              (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((chat) {
-                    final participants =
-                        List<String>.from(chat['participantIds'] ?? []);
-                    // Solo ocultar si TODOS los otros participantes estan bloqueados
-                    // (chat de 2 personas donde el otro esta bloqueado)
-                    final otros =
-                        participants.where((p) => p != userId).toList();
-                    if (otros.isEmpty) return false;
-                    // En chats de 2, ocultar si el otro esta bloqueado
-                    if (otros.length == 1) {
-                      return !bloqueados.contains(otros.first);
-                    }
-                    // En chats grupales, mostrar siempre
-                    return true;
-                  }).toList());
+            (s) => s.docs.map((d) => {'id': d.id, ...d.data()}).where((
+              chat,
+            ) {
+              final participants = List<String>.from(
+                chat['participantIds'] ?? [],
+              );
+              // Solo ocultar si TODOS los otros participantes estan bloqueados
+              // (chat de 2 personas donde el otro esta bloqueado)
+              final otros = participants.where((p) => p != userId).toList();
+              if (otros.isEmpty) return false;
+              // En chats de 2, ocultar si el otro esta bloqueado
+              if (otros.length == 1) {
+                return !bloqueados.contains(otros.first);
+              }
+              // En chats grupales, mostrar siempre
+              return true;
+            }).toList(),
+          );
     }).asyncExpand((s) => s);
   }
   // ââ Bloqueos de usuarios âââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -1003,9 +1120,13 @@ class FirestoreService {
     if (!_available) return;
     if (uid == blockedUid) return;
     await _usuarios.doc(uid).collection('blocked').doc(blockedUid).set(
-        Bloqueo(uid: uid, blockedUid: blockedUid, fecha: DateTime.now())
-            .toMap(),
-        SetOptions(merge: true));
+          Bloqueo(
+            uid: uid,
+            blockedUid: blockedUid,
+            fecha: DateTime.now(),
+          ).toMap(),
+          SetOptions(merge: true),
+        );
   }
 
   /// Desbloquea a [blockedUid] para [uid].

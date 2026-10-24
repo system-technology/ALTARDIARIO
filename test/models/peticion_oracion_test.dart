@@ -14,6 +14,7 @@ void main() {
         'motivo': 'Oren por mi familia',
         'fecha': Timestamp.fromDate(now),
         'oracionesCount': 3,
+        'apoyadosPor': ['uid1', 'uid2'],
       });
       expect(p.id, 'pet_001');
       expect(p.userId, 'user_001');
@@ -21,6 +22,7 @@ void main() {
       expect(p.motivo, 'Oren por mi familia');
       expect(p.fecha, now);
       expect(p.oracionesCount, 3);
+      expect(p.apoyadosPor, ['uid1', 'uid2']);
     });
 
     test('fromMap maneja valores nulos', () {
@@ -30,6 +32,7 @@ void main() {
       expect(p.userName, 'Anónimo');
       expect(p.motivo, '');
       expect(p.oracionesCount, 0);
+      expect(p.apoyadosPor, []);
     });
 
     test('toMap produce el mapa correcto', () {
@@ -40,6 +43,7 @@ void main() {
         motivo: 'Sanidad',
         fecha: now,
         oracionesCount: 5,
+        apoyadosPor: ['uid1', 'uid2'],
       );
       final map = p.toMap();
       expect(map['userId'], 'user_001');
@@ -47,6 +51,7 @@ void main() {
       expect(map['motivo'], 'Sanidad');
       expect(map['oracionesCount'], 5);
       expect(map['fecha'], isA<Timestamp>());
+      expect(map['apoyadosPor'], ['uid1', 'uid2']);
     });
 
     test('oracionesCount por defecto es 0', () {
@@ -58,6 +63,18 @@ void main() {
         fecha: now,
       );
       expect(p.oracionesCount, 0);
+      expect(p.apoyadosPor, []);
+    });
+
+    test('apoyadosPor por defecto es lista vacía', () {
+      final p = PeticionOracion(
+        id: 'pet_003',
+        userId: 'user_003',
+        userName: 'Juan',
+        motivo: 'Salud',
+        fecha: now,
+      );
+      expect(p.apoyadosPor, []);
     });
   });
 }

@@ -550,13 +550,16 @@ void main() {
       service = FirestoreService(firestore: fake);
     });
 
-    test('apoyarPeticion incrementa oracionesCount', () async {
+    test(
+        'apoyarPeticion incrementa oracionesCount y añade userId a apoyadosPor',
+        () async {
       await fake.doc('peticiones_oracion/p1').set({'oracionesCount': 5});
 
-      await service.apoyarPeticion('p1');
+      await service.apoyarPeticion('p1', 'user123');
 
       final doc = await fake.doc('peticiones_oracion/p1').get();
       expect(doc.data()?['oracionesCount'], 6);
+      expect(doc.data()?['apoyadosPor'], ['user123']);
     });
   });
 

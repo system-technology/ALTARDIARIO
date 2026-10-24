@@ -894,10 +894,71 @@ class FirestoreService {
     await _peticiones.add(peticion.toMap());
   }
 
-  Future<void> apoyarPeticion(String peticionId) async {
+  Future<void> apoyarPeticion(String peticionId, String userId) async {
     if (!_available) return;
     await _peticiones.doc(peticionId).update({
       'oracionesCount': FieldValue.increment(1),
+      'apoyadosPor': FieldValue.arrayUnion([userId]),
+    });
+  }
+
+  /// Stream de peticiones donde el usuario actual hizo "Amén" (está en apoyadosPor).
+  Stream<List<PeticionOracion>> peticionesStreamDondeOro(String uid) {
+    if (!_available) return Stream.value([]);
+    return _peticiones
+        .where('oculto', isEqualTo: false)
+        .where('apoyadosPor', arrayContains: uid)
+        .orderBy('fecha', descending: true)
+        .limit(prayerPageSize)
+        .snapshots()
+        .map(
+          (s) => s.docs
+              .map((d) => PeticionOracion.fromMap({'id': d.id, ...d.data()}))
+              .toList(),
+        );
+  }
+
+  /// Stream de peticiones donde el usuario actual hizo "Amén" con paginación por cursor.
+  /// [lastDocument] es el último documento de la página anterior (opcional).
+  /// Retorna una tupla con (items, lastDoc, hasMore).
+  Stream<
+      ({
+        List<PeticionOracion> items,
+        DocumentSnapshot? lastDoc,
+        bool hasMore
+      })> peticionesStreamDondeOroCursor({
+    required String uid,
+    DocumentSnapshot? lastDocument,
+  }) {
+    if (!_available) {
+      return Stream.value((
+        items: <PeticionOracion>[],
+        lastDoc: null,
+        hasMore: false,
+      ));
+    }
+    Query query = _peticiones
+        .where('oculto', isEqualTo: false)
+        .where('apoyadosPor', arrayContains: uid)
+        .orderBy('fecha', descending: true)
+        .limit(prayerPageSize);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    return query.snapshots().map((s) {
+      final items = s.docs
+          .map(
+            (d) => PeticionOracion.fromMap({
+              'id': d.id,
+              ...d.data() as Map<String, dynamic>,
+            }),
+          )
+          .toList();
+      final newLastDoc = s.docs.isNotEmpty ? s.docs.last : null;
+      final hasMore = s.docs.length >= prayerPageSize;
+      return (items: items, lastDoc: newLastDoc, hasMore: hasMore);
     });
   }
 

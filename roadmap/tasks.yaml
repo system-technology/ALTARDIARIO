@@ -1801,7 +1801,7 @@ tasks:
     phase: 1
     priority: P0
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - "Decisión del Owner: la Reina-Valera 1960 se mantiene empaquetada en la app
@@ -1828,6 +1828,12 @@ tasks:
       - lib/presentation/screens/bible_compare_screen.dart
     source: auditoria-claude:2026-10-24
     created_at: 2026-10-24T18:00:00.000Z
+    started_at: 2026-10-24T17:45:56.285Z
+    done_at: 2026-10-24T17:45:56.286Z
+    evidence: "Mergeado en main por el PR #125 (rama b/T-078-biblias-rvr1960-incluida-para-uso-sin-co) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 3cc61fc238d54183772d7151deee66ade36368c5
   - id: T-079
     title: Página pública de política de privacidad en Hosting (es/en) acorde a los datos reales
     type: feature

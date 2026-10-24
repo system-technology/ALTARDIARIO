@@ -4,6 +4,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es/1.1.0/). Versionado se
 
 ## [Unreleased]
 
+### Añadido
+- Biblia RVR1960 empaquetada y funcional offline desde primer arranque (T-078).
+- `assets/bible/LICENCIAS.md`: registro de licencias por versión (RVR1960 por decisión Owner, RVR1909/WEB/KJV dominio público).
+- Pantalla de versiones: atribución/licencia visible, reintento de descarga (3× backoff exponencial), tamaño de archivo en MB.
+- Tests: `bible_license_test`, `bible_service_offline_test`, `bible_download_service_test`, `bible_versions_screen_test`.
+
 ### Seguridad
 - Reglas de Firestore reescritas: nadie edita contenido ajeno; chats privados solo para participantes; notificaciones no suplantables; contadores sociales acotados a ±1 con uid propio; colección `reports` para moderación.
 - Chats: allowlist de campos actualizables en `/chats` (`participantIds`, `lastMessage`, `lastSenderId`, `lastUpdate`, `participantNames`) y `create` con participantes duplicados rechazado.

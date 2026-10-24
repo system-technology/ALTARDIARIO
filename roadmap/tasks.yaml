@@ -1550,7 +1550,7 @@ tasks:
     phase: 4
     priority: P2
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - peticionesStreamFiltrado acepta parámetro lastDocument y usa startAfterDocument
@@ -1563,6 +1563,12 @@ tasks:
       - test/services/firestore_service_test.dart
     source: auditoria-auto:2026-10-24
     created_at: 2026-10-24T11:55:11.852Z
+    started_at: 2026-10-24T18:15:33.971Z
+    done_at: 2026-10-24T18:15:33.972Z
+    evidence: "Mergeado en main por el PR #127 (rama b/T-069-paginacion-por-cursor-en-peticiones-de-o) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: af5628d8177c1de14c8afffbccb5ffec7e570784
   - id: T-070
     title: Filtro 'Por las que oro' en OracionScreen (peticiones donde usuario actual hizo Amén)
     type: feature

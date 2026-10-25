@@ -836,7 +836,7 @@ tasks:
     phase: 3
     priority: P3
     effort: S
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - la feature vive en lib/features/moderation con data/, providers/ y presentation/
@@ -846,6 +846,11 @@ tasks:
       - lib/features/moderation/
     source: audit docs/PRODUCT_EVOLUTION_ROADMAP.md fase 5.1
     created_at: 2026-10-21T02:44:52.916Z
+    started_at: 2026-10-25T00:21:31.220Z
+    done_at: 2026-10-25T00:21:31.220Z
+    evidence: "Mergeado en main por el PR #99 (rama b/T-035-migrar-moderacion) con el CI en verde: format,
+      analyze, tests y los demás checks obligatorios. Cierre automático (.github/workflows/cerrar-tarea.yml)."
+    commit: 269714b
   - id: T-036
     title: "Observabilidad accionable: eventos de producto sin datos sensibles"
     type: infra
@@ -1398,7 +1403,7 @@ tasks:
     phase: 1
     priority: P2
     effort: S
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - Comprobar en producción que no existen documentos con hidden:true
@@ -1407,6 +1412,11 @@ tasks:
       - functions/src/moderation.ts
     source: auditoria:2026-10-24
     created_at: 2026-10-24T01:52:21.122Z
+    started_at: 2026-10-25T00:21:31.390Z
+    done_at: 2026-10-25T00:21:31.391Z
+    evidence: "Mergeado en main por el PR #110 (rama a/T-061-migracion-oculto) con el CI en verde: format,
+      analyze, tests y los demás checks obligatorios. Cierre automático (.github/workflows/cerrar-tarea.yml)."
+    commit: 51bde30
   - id: T-062
     title: Adaptar el agente orchestrator y /cycle al marco de tres sesiones (sin escribir el roadmap por MCP
       desde Plataforma/Producto)
@@ -1475,7 +1485,7 @@ tasks:
     phase: 4
     priority: P2
     effort: S
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - "firestore.indexes.json declara índice: collectionGroup='peticiones_oracion', fields: oculto (ASC),
@@ -1488,6 +1498,11 @@ tasks:
       - firestore-tests/rules.test.mjs
     source: auditoria-auto:2026-10-23
     created_at: 2026-10-24T04:39:15.912Z
+    started_at: 2026-10-25T00:21:31.053Z
+    done_at: 2026-10-25T00:21:31.053Z
+    evidence: "Mergeado en main por el PR #103 (rama a/T-065-indice-peticiones) con el CI en verde: format,
+      analyze, tests y los demás checks obligatorios. Cierre automático (.github/workflows/cerrar-tarea.yml)."
+    commit: ed6f447
   - id: T-066
     title: "Reglas: allowlist explícita para campos respondida/fechaRespondida en peticiones_oracion"
     type: security

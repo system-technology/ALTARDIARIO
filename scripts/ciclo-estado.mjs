@@ -33,6 +33,36 @@ for (const lane of Object.keys(cfg.carriles)) {
   console.log('');
 }
 
+// Auditor
+const auditorDir = join(base, 'auditor-auto');
+console.log(`━━ auditor ━━`);
+if (!existsSync(auditorDir)) {
+  console.log('  sin actividad todavía\n');
+} else {
+  let e = {};
+  try { e = JSON.parse(readFileSync(join(auditorDir, 'estado.json'), 'utf8')); } catch { /* sin estado */ }
+  const ciclos = e.fecha === hoy ? e.ciclos : 0;
+  let latido = 'sin latido';
+  try {
+    const min = Math.round((Date.now() - statSync(join(auditorDir, 'latido.txt')).mtimeMs) / 60000);
+    latido = `hace ${min} min${min > 40 ? '  ⚠ posiblemente parado' : ''}`;
+  } catch { /* sin fichero */ }
+  console.log(`  ciclos hoy: ${ciclos} · latido: ${latido}`);
+  if (e.problemasPendientes !== undefined) {
+    console.log(`  problemas abiertos: ${e.problemasPendientes}`);
+  }
+  if (existsSync(join(auditorDir, 'STOP'))) console.log('  ⏸ freno STOP propio activo');
+  // ESCALADA.md en la raíz de sesiones (base)
+  if (existsSync(join(base, 'ESCALADA.md'))) {
+    console.log('  🚨 ESCALADA.md existe — revisar');
+  }
+  try {
+    const lineas = readFileSync(join(auditorDir, 'ciclo.log'), 'utf8').trim().split('\n').slice(-6);
+    console.log('  últimos eventos:\n' + lineas.map((l) => '    ' + l.slice(0, 160)).join('\n'));
+  } catch { /* sin log */ }
+  console.log('');
+}
+
 const r = spawnSync(process.execPath, [join(aqui, 'board.mjs')], { encoding: 'utf8' });
 const pend = (r.stdout || '').split('\n').filter((l) => /EN REVISIÓN|RESERVADA/.test(l));
 console.log('PRs de tareas en curso:\n' + (pend.length ? pend.map((l) => '  ' + l).join('\n') : '  ninguno'));

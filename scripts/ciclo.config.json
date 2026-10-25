@@ -93,7 +93,8 @@
     "directorio": "auditor-auto",
     "modelo": [
       "nvidia/nvidia/nemotron-3-ultra-550b-a55b",
-      "opencode/nemotron-3-ultra-free"
+      "opencode/kimi-k3.1-pro",
+      "opencode/qwen3-8b-max"
     ],
     "modeloRevisa": [
       "opencode/glm-5.3-flash-free",

@@ -1852,7 +1852,7 @@ tasks:
     phase: 1
     priority: P0
     effort: S
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - web/privacidad.html (y web/privacy.html en inglés) estáticas, sin dependencias externas, accesibles en
@@ -1869,6 +1869,12 @@ tasks:
       - web/privacy.html
     source: auditoria-claude:2026-10-24
     created_at: 2026-10-24T18:00:00.000Z
+    started_at: 2026-10-25T00:28:07.280Z
+    done_at: 2026-10-25T00:28:07.280Z
+    evidence: "Mergeado en main por el PR #124 (rama a/T-079-pagina-publica-de-politica-de-privacidad) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: d60e8d84a6f81b63d47d6f4cc848c8545fd02057
   - id: T-080
     title: Documento de ficha de tienda con las respuestas de seguridad de datos y clasificación
     type: docs

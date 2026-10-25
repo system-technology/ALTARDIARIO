@@ -88,6 +88,21 @@
     ],
     "enfriamientoSinTareasHoras": 3
   },
+  "auditor": {
+    "minutosEntreCiclos": 90,
+    "directorio": "auditor-auto",
+    "modelo": [
+      "nvidia/nvidia/nemotron-3-ultra-550b-a55b",
+      "opencode/nemotron-3-ultra-free"
+    ],
+    "modeloRevisa": [
+      "opencode/glm-5.3-flash-free",
+      "nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b"
+    ],
+    "escaladaCiclos": 3,
+    "minutosFase": 25,
+    "minutosFaseRespaldo": 15
+  },
   "_modelosNota": "Cada fase prueba los modelos en orden y pasa al siguiente si el anterior no produce lo esperado (agota el tiempo, 429, etc.): NVIDIA primero y los gratuitos de OpenCode como respaldo.",
   "minutosFaseRespaldo": 15,
   "maxPrsProtegidos": 3,

@@ -1550,7 +1550,7 @@ tasks:
     phase: 4
     priority: P2
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - peticionesStreamFiltrado acepta parámetro lastDocument y usa startAfterDocument
@@ -1563,13 +1563,19 @@ tasks:
       - test/services/firestore_service_test.dart
     source: auditoria-auto:2026-10-24
     created_at: 2026-10-24T11:55:11.852Z
+    started_at: 2026-10-24T18:15:33.971Z
+    done_at: 2026-10-24T18:15:33.972Z
+    evidence: "Mergeado en main por el PR #127 (rama b/T-069-paginacion-por-cursor-en-peticiones-de-o) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: af5628d8177c1de14c8afffbccb5ffec7e570784
   - id: T-070
     title: Filtro 'Por las que oro' en OracionScreen (peticiones donde usuario actual hizo Amén)
     type: feature
     phase: 4
     priority: P3
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - "Nuevo valor en peticionesFiltroProvider: 'mis_oraciones' (o enum)"
@@ -1583,6 +1589,12 @@ tasks:
       - test/screens/oracion_screen_test.dart
     source: auditoria-auto:2026-10-24
     created_at: 2026-10-24T11:55:11.852Z
+    started_at: 2026-10-24T18:51:13.584Z
+    done_at: 2026-10-24T18:51:13.584Z
+    evidence: "Mergeado en main por el PR #129 (rama b/T-070-filtro-por-las-que-oro-en-oracionscreen) con el CI en
+      verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 1085e048680e5a8c15eee8749a7a68278bf4f8eb
   - id: T-071
     title: Script de migración del campo oculto en documentos anteriores a T-026
     type: bug
@@ -1655,7 +1667,7 @@ tasks:
     phase: 1
     priority: P1
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - scripts/auditor.mjs es un proceso continuo como scripts/ciclo.mjs (node scripts/auditor.mjs), con
@@ -1691,6 +1703,12 @@ tasks:
       - scripts/auditor.test.mjs
     source: auditoria-claude:2026-10-24
     created_at: 2026-10-24T16:00:00.000Z
+    started_at: 2026-10-24T17:20:00.014Z
+    done_at: 2026-10-24T17:20:00.015Z
+    evidence: "Mergeado en main por el PR #122 (rama a/T-073-auditor-autonomo-del-ciclo-scripts-audit) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 0f932101b106fa68f20bc9b127f002d00e4e8022
   - id: T-074
     title: Poner el auditor en la configuración del ciclo, en el estado y en el arranque con Windows
     type: feature
@@ -1795,7 +1813,7 @@ tasks:
     phase: 1
     priority: P0
     effort: M
-    status: backlog
+    status: done
     depends_on: []
     acceptance:
       - "Decisión del Owner: la Reina-Valera 1960 se mantiene empaquetada en la app
@@ -1822,6 +1840,12 @@ tasks:
       - lib/presentation/screens/bible_compare_screen.dart
     source: auditoria-claude:2026-10-24
     created_at: 2026-10-24T18:00:00.000Z
+    started_at: 2026-10-24T17:45:56.285Z
+    done_at: 2026-10-24T17:45:56.286Z
+    evidence: "Mergeado en main por el PR #125 (rama b/T-078-biblias-rvr1960-incluida-para-uso-sin-co) con el CI
+      en verde: format, analyze, tests y los demás checks obligatorios. Cierre automático
+      (.github/workflows/cerrar-tarea.yml)."
+    commit: 3cc61fc238d54183772d7151deee66ade36368c5
   - id: T-079
     title: Página pública de política de privacidad en Hosting (es/en) acorde a los datos reales
     type: feature

@@ -4,6 +4,25 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es/1.1.0/). Versionado se
 
 ## [Unreleased]
 
+### Añadido
+- Filtro "Por las que oro" en OracionScreen: muestra peticiones donde el usuario actual hizo "Amén" (T-070).
+- Campo `apoyadosPor` (List<String>) en `PeticionOracion` para rastrear UIDs que oraron.
+- `apoyarPeticion` ahora incrementa `oracionesCount` y añade el UID a `apoyadosPor` con `FieldValue.arrayUnion`.
+- Nuevos métodos en `FirestoreService`: `peticionesStreamDondeOro(uid)` y `peticionesStreamDondeOroCursor(uid, lastDocument)`.
+- Nuevos métodos en `OracionRepository`: `peticionesStreamDondeOro(uid)` y `peticionesStreamDondeOroCursor(uid, lastDocument)` con filtro de bloqueados/oculto.
+- Enum `PeticionesFiltro { todas, pendientes, respondidas, misOraciones }` en providers de oración.
+- Provider `peticionesDondeOroProvider` y actualización de `peticionesFiltradasProvider` y `peticionesFiltradasCursorProvider` para manejar el nuevo filtro.
+- UI: PopupMenuButton en OracionScreen incluye opción "Por las que oro".
+- Tests: modelo (`peticion_oracion_test.dart`), repositorio (`oracion_repository_test.dart`), widget (`oracion_screen_test.dart`).
+
+### Cambiado
+- `apoyarPeticion` en `FirestoreService`, `OracionRepository` y UI ahora requiere `userId` como segundo parámetro.
+
+- Biblia RVR1960 empaquetada y funcional offline desde primer arranque (T-078).
+- `assets/bible/LICENCIAS.md`: registro de licencias por versión (RVR1960 por decisión Owner, RVR1909/WEB/KJV dominio público).
+- Pantalla de versiones: atribución/licencia visible, reintento de descarga (3× backoff exponencial), tamaño de archivo en MB.
+- Tests: `bible_license_test`, `bible_service_offline_test`, `bible_download_service_test`, `bible_versions_screen_test`.
+
 ### Seguridad
 - Reglas de Firestore reescritas: nadie edita contenido ajeno; chats privados solo para participantes; notificaciones no suplantables; contadores sociales acotados a ±1 con uid propio; colección `reports` para moderación.
 - Chats: allowlist de campos actualizables en `/chats` (`participantIds`, `lastMessage`, `lastSenderId`, `lastUpdate`, `participantNames`) y `create` con participantes duplicados rechazado.
@@ -12,6 +31,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es/1.1.0/). Versionado se
 
 ### Añadido
 - Páginas públicas de política de privacidad en español (`web/privacidad.html`) e inglés (`web/privacy.html`), estáticas, sin dependencias externas, con contenido deducido del código real: Firebase Auth (correo, Google, Apple, invitado), Firestore (perfil público, cuenta privada, reflexiones, comentarios, peticiones, debates, chats, notificaciones, notas, resaltados), Crashlytics, Analytics saneado, App Check, FCM; tabla de visibilidad público/privado, borrado de cuenta (Perfil y correo), retención, contacto, edad mínima, no venta de datos. (T-079)
+- Auditor autónomo del ciclo (`scripts/auditor.mjs` + `scripts/auditor.test.mjs`): supervisor continuo con latido, STOP global, Phase 1 (snapshot + 7 detectores deterministas) y Phase 2 (modelo con fallback en cascada), acciones permitidas en lista blanca (reiniciar supervisor, crear STOP, escribir informe), informe por ciclo en `sesiones/INFORME-AUDITOR.md` y escalada en `sesiones/ESCALADA.md`. CLI: `--una-vez`, `--simulacro`. Sección `auditor` en `ciclo.config.json`. (T-073)
 - Script de migración del campo `oculto` (`scripts/migrar-oculto.mjs`): recorre `reflexiones`, `debates`, `peticiones_oracion` (colecciones raíz) y `comentarios`, `respuestas` (collectionGroup); pone `oculto=false` donde falta el campo y `oculto=true` si tenían `hidden:true`; idempotente, lotes de 400, simulacro por defecto con `--aplicar` para escribir; usa `firebase-admin` de `functions/node_modules` con `GOOGLE_APPLICATION_CREDENTIALS`. (T-071)
 - Componentes de estados asíncronos reutilizables (`lib/presentation/widgets/estados/`): carga, vacío, error con reintento y `AsyncStateBuilder`, con tests. Rescatados de la rama `rescate/main-local-20261022-2201`.
 - Compartir versículo como imagen (T-010): botón Compartir en lector genera texto con versículo, referencia y marca AltarDiario; usa share_plus para Android/iOS/Web.

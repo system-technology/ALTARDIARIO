@@ -407,9 +407,8 @@ class _PeticionCard extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  ref
-                      .read(firestoreServiceProvider)
-                      .apoyarPeticion(peticion.id);
+                  ref.read(firestoreServiceProvider).apoyarPeticion(
+                      peticion.id, ref.read(effectiveUserUidProvider)!);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Has dicho: ¡Amén! 🙏'),

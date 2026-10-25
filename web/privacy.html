@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="altarDiario Privacy Policy - Devotional social network">
+  <title>Privacy Policy - altarDiario</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: #1a1a2e;
+      background: #fafafa;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    header {
+      text-align: center;
+      padding: 32px 0 24px;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 32px;
+    }
+    h1 { font-size: 2rem; font-weight: 700; color: #1565C0; margin-bottom: 8px; }
+    .subtitle { color: #666; font-size: 1rem; }
+    .meta { color: #888; font-size: 0.875rem; margin-top: 8px; }
+    section { margin-bottom: 32px; }
+    h2 { font-size: 1.25rem; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #1565C0; }
+    h3 { font-size: 1.05rem; font-weight: 600; color: #333; margin: 20px 0 10px; }
+    p { margin-bottom: 12px; color: #333; }
+    ul { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 6px; color: #333; }
+    a { color: #1565C0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .highlight-box {
+      background: #e3f2fd;
+      border-left: 4px solid #1565C0;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .highlight-box strong { color: #1565C0; }
+    .public-badge, .private-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .public-badge { background: #e8f5e9; color: #2e7d32; }
+    .private-badge { background: #fce4ec; color: #c62828; }
+    .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+    .data-table th { background: #f5f5f5; font-weight: 600; color: #333; }
+    .data-table tr:hover { background: #fafafa; }
+    footer { text-align: center; padding: 24px 0; border-top: 1px solid #e0e0e0; color: #888; font-size: 0.875rem; }
+    .lang-switch { text-align: right; margin-bottom: 16px; }
+    .lang-switch a { padding: 6px 12px; background: #1565C0; color: white; border-radius: 6px; font-size: 0.875rem; }
+    .lang-switch a:hover { background: #0d47a1; text-decoration: none; }
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.1rem; }
+      body { padding: 16px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-switch">
+    <a href="privacidad.html">Versión en español / Spanish version</a>
+  </div>
+
+  <header>
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">altarDiario — Devotional social network</p>
+    <p class="meta">Last updated: October 2026</p>
+  </header>
+
+  <section>
+    <h2>1. Data Controller</h2>
+    <p><strong>altarDiario</strong> (hereinafter, "the App", "we", or "the controller")</p>
+    <p>Contact email: <a href="mailto:privacidad@altardiario.app">privacidad@altardiario.app</a></p>
+    <p>This policy describes what personal data we collect, why we use it, with whom it is shared, and what your rights are.</p>
+  </section>
+
+  <section>
+    <h2>2. What Data We Collect and Why</h2>
+    <p>We only process data strictly necessary for the App to function. We do not sell data to third parties or build advertising profiles.</p>
+
+    <h3>2.1 Authentication (Firebase Authentication)</h3>
+    <p>We offer several sign-in methods. Each collects only what is essential:</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Method</th><th>Data Collected</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Email and password</td><td>Email address</td><td>Identify and authenticate the user</td></tr>
+        <tr><td>Google Sign-In</td><td>Email, name, profile photo (optional)</td><td>Social auth; pre-fill public profile</td></tr>
+        <tr><td>Apple Sign-In (iOS/Android only)</td><td>Email, full name (optional)</td><td>Social auth; pre-fill public profile</td></tr>
+        <tr><td>Guest access</td><td>Random local identifier (no personal data)</td><td>Try the App without registering</td></tr>
+      </tbody>
+    </table>
+    <p class="highlight-box"><strong>Note:</strong> Passwords are handled by Firebase Auth with secure hashing; we never see or store them.</p>
+
+    <h3>2.2 Profile and Activity Data in Firestore</h3>
+    <p>The database distinguishes between <span class="public-badge">public</span> (visible to anyone) and <span class="private-badge">private</span> (only you or participants).</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Collection / Subcollection</th><th>Visibility</th><th>Main Fields</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>users/{uid}</code> (profile)</td><td><span class="public-badge">Public</span></td><td>name, photoUrl, bio, creationDate, following[], followers[], badges, totalPoints, level, readingProgress[], maxStreak, followedTopics[]</td></tr>
+        <tr><td><code>users/{uid}/private/account</code></td><td><span class="private-badge">Private</span></td><td>email, fcmToken (push token)</td></tr>
+        <tr><td><code>reflexiones</code> (reflections)</td><td><span class="public-badge">Public</span></td><td>userId, userName, text, passageOfDay, date, likes, likedBy[], reactions{}, tags[], hidden</td></tr>
+        <tr><td><code>reflexiones/{id}/comentarios</code></td><td><span class="public-badge">Public</span></td><td>userId, userName, userPhotoUrl, text, date, likes, likedBy[], hidden</td></tr>
+        <tr><td><code>peticiones_oracion</code> (prayers)</td><td><span class="public-badge">Public</span></td><td>userId, userName, reason, date, prayerCount, answered, hidden</td></tr>
+        <tr><td><code>debates</code></td><td><span class="public-badge">Public</span></td><td>title, content, userId, userName, bookId, upvotes, votedBy[], replyCount, tags[], closed, hidden</td></tr>
+        <tr><td><code>debates/{id}/respuestas</code></td><td><span class="public-badge">Public</span></td><td>userId, userName, content, date, upvotes, votedBy[], hidden</td></tr>
+        <tr><td><code>chats</code></td><td><span class="private-badge">Private (participants)</span></td><td>participantIds[2], participantNames, lastMessage, lastSenderId, lastUpdate; messages in subcollection</td></tr>
+        <tr><td><code>users/{uid}/notifications</code></td><td><span class="private-badge">Private</span></td><td>type, title, body, data, actorId, actorName, actorPhotoUrl, read, createdAt</td></tr>
+        <tr><td><code>users/{uid}/bible_highlights</code></td><td><span class="private-badge">Private</span></td><td>Personal Bible highlights</td></tr>
+        <tr><td><code>users/{uid}/bible_notes</code></td><td><span class="private-badge">Private</span></td><td>Personal verse notes</td></tr>
+        <tr><td><code>users/{uid}/notes</code></td><td><span class="private-badge">Private</span></td><td>General user notes</td></tr>
+        <tr><td><code>users/{uid}/blocked</code></td><td><span class="private-badge">Private</span></td><td>List of blocked user IDs</td></tr>
+      </tbody>
+    </table>
+
+    <h3>2.3 Observability and Security</h3>
+    <ul>
+      <li><strong>Crashlytics (Firebase):</strong> Crash reports with user identifier (UID only) — <em>no personal data</em>.</li>
+      <li><strong>Analytics (Firebase):</strong> Product events with sanitized parameters: only numbers, booleans, and closed-catalog values (e.g., "reading", "reflection", "prayer"). <strong>Never</strong> free text, emails, tokens, or user content.</li>
+      <li><strong>App Check (Firebase):</strong> Device attestation (Play Integrity / DeviceCheck / reCAPTCHA v3) to protect APIs from abuse.</li>
+    </ul>
+
+    <h3>2.4 Push Notifications</h3>
+    <p>We use <strong>Firebase Cloud Messaging (FCM)</strong>. The FCM token is stored in <code>users/{uid}/private/account</code> (private) and is used exclusively to send daily reading reminders and social activity notifications (new followers, comments, reactions, "amens", debate replies, mentions). You can disable them in App Settings or system permissions.</p>
+
+    <h3>2.5 Local Storage</h3>
+    <ul>
+      <li><code>SharedPreferences</code>: Local UID for offline session, notification preferences (hour/minute), downloaded reading plan.</li>
+      <li><code>SQLite (sqflite)</code>: Downloaded Bibles for offline reading.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. What Is Public vs. Private</h2>
+    <div class="highlight-box">
+      <strong>Public (anyone can read):</strong> profile (name, photo, bio, stats), reflections, comments, prayer requests, debates, replies, reactions, votes, following/followers.
+    </div>
+    <div class="highlight-box" style="background:#fce4ec; border-color:#c62828;">
+      <strong>Private (only you or participants):</strong> email address, FCM token, 1:1 chats, notifications, highlights, Bible notes, general notes, blocked list, auth credentials.
+    </div>
+    <p>Firestore security rules (audited and tested) guarantee that <strong>no one can read or write another user's private data</strong>. Social counters (likes, votes, "amens") only change by ±1 and only by adding/removing your own UID.</p>
+  </section>
+
+  <section>
+    <h2>4. Legal Basis (GDPR)</h2>
+    <ul>
+      <li><strong>Contract performance / user request:</strong> authentication, saving your content, cross-device sync, notifications you asked for.</li>
+      <li><strong>Consent:</strong> analytics (optional, disableable), push notifications (optional, system permission).</li>
+      <li><strong>Legitimate interest:</strong> security (App Check), stability (Crashlytics), abuse/spam prevention.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Retention and Deletion</h2>
+    <ul>
+      <li>Account and content data: kept while the account exists.</li>
+      <li><strong>Account deletion:</strong> from Profile → "Delete Account". This deletes your public profile and the private <code>private/account</code> document in a single atomic operation. Once task T-076 is integrated, your published content (reflections, comments, prayers, debates, replies, chats, notes, highlights) will also be deleted.</li>
+      <li>You can also request deletion by email to <a href="mailto:privacidad@altardiario.app">privacidad@altardiario.app</a> (we respond within ≤ 30 days).</li>
+      <li>Crashlytics logs: 90 days (Firebase policy).</li>
+      <li>Analytics events: 14 months (Firebase policy).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Your Rights (GDPR)</h2>
+    <p>You may exercise at any time:</p>
+    <ul>
+      <li>Right of access</li>
+      <li>Right to rectification</li>
+      <li>Right to erasure ("right to be forgotten")</li>
+      <li>Right to restriction of processing</li>
+      <li>Right to data portability</li>
+      <li>Right to object</li>
+    </ul>
+    <p>Write to <a href="mailto:privacidad@altardiario.app">privacidad@altardiario.app</a> with subject "GDPR Rights" and your UID or account email.</p>
+  </section>
+
+  <section>
+    <h2>7. International Transfers</h2>
+    <p>Firebase (Google) hosts data in EU and US data centers. Google provides Standard Contractual Clauses and EU-US / Swiss-US Privacy Framework certifications to ensure an equivalent level of protection.</p>
+  </section>
+
+  <section>
+    <h2>8. Minimum Age</h2>
+    <p>The App is intended for users aged <strong>13+</strong> (or the digital consent age in your country, whichever is higher). We do not knowingly collect data from children. If we detect an underage account, we delete it.</p>
+  </section>
+
+  <section>
+    <h2>9. Changes to This Policy</h2>
+    <p>We will post the updated version at this same URL with the revision date. Material changes will be notified in the App (notification or banner) with reasonable notice.</p>
+  </section>
+
+  <section>
+    <h2>10. Contact</h2>
+    <p>Controller: <strong>altarDiario</strong><br>
+    Email: <a href="mailto:privacidad@altardiario.app">privacidad@altardiario.app</a></p>
+  </section>
+
+  <footer>
+    <p>altarDiario — Devotional social network · Privacy Policy v2026.10</p>
+    <p><a href="privacidad.html">Versión en español</a></p>
+  </footer>
+</body>
+</html>
